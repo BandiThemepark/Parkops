@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
+import useAuthentication from "../middleware/authentication";
+
+const login = () => {
+  console.log(useAuthentication.getFirebaseApp());
+};
 </script>
 
 <template>
@@ -31,7 +36,7 @@ import Input from "@/components/ui/input/Input.vue";
         <div class="grid gap-2 mb-4">
           <Input type="email" placeholder="john.doe@gmail.com" />
           <Input type="password" placeholder="P@ssw0rd" />
-          <Button>Log in</Button>
+          <Button @click="login">Log in</Button>
         </div>
         <div class="flex items-center text-stone-300 space-x-4 mb-4">
           <div class="w-full h-px bg-stone-300"></div>

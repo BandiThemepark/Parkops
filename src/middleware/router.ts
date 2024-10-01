@@ -11,7 +11,7 @@ const routes: RouteRecordRaw[] = [
     path: "/home",
     name: "home",
     component: () => import("@/views/Home.vue"),
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true, roles: [Roles.OWNER, Roles.CREW] },
   },
 ];
 
@@ -39,8 +39,13 @@ router.beforeEach(async (to, _from, next) => {
     } else {
       next({ path: "/", query: { redirect: to.fullPath } });
     }
-  } else {
-    next();
+  } else if (to.path === "/") {
+    let currentUser = useAuthentication.getUser();
+    if (currentUser) {
+      next({ path: "/home" });
+    } else {
+      next();
+    }
   }
 });
 

@@ -8,7 +8,8 @@ import useAuthentication from "./middleware/authentication";
 
   // Implementation of middleware
   useAuthentication.init();
-  await useAuthentication.restoreAuth();
+  const result = await useAuthentication.restoreAuth();
+  console.log("user logged in", result);
   app.use(router);
 
   // Mount the app

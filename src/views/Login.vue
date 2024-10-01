@@ -2,9 +2,46 @@
 import Button from "@/components/ui/button/Button.vue";
 import Input from "@/components/ui/input/Input.vue";
 import useAuthentication from "../middleware/authentication";
+import { ref } from "vue";
+import { email, required } from "@vuelidate/validators";
+import useVuelidate from "@vuelidate/core";
+import { FirebaseError } from "firebase/app";
+import router from "../middleware/router";
 
-const login = () => {
-  console.log(useAuthentication.getFirebaseApp());
+const inputValues = ref({
+  email: "",
+  password: "",
+});
+
+const inputRules = {
+  email: {
+    required,
+    email,
+  },
+  password: {
+    required,
+  },
+};
+
+const v$ = useVuelidate(inputRules, inputValues);
+
+const login = async () => {
+  v$.value.$validate();
+  if (v$.value.$error) {
+    return;
+  }
+  const result = await useAuthentication.loginUsernamePassword(
+    inputValues.value.email,
+    inputValues.value.password
+  );
+
+  // check type of result is a UserCredentil or a FirebaseError
+  if (result instanceof FirebaseError) {
+    console.error(result);
+    return;
+  } else {
+    router.push({ path: "/home" });
+  }
 };
 </script>
 
@@ -34,8 +71,34 @@ const login = () => {
           </p>
         </div>
         <div class="grid gap-2 mb-4">
-          <Input type="email" placeholder="john.doe@gmail.com" />
-          <Input type="password" placeholder="P@ssw0rd" />
+          <form action="javascript:void(0)"></form>
+          <div>
+            <Input
+              v-model="inputValues.email"
+              type="email"
+              placeholder="john.doe@gmail.com"
+            />
+            <span
+              class="text-xs text-red-500 font-medium"
+              v-if="v$.email.$error"
+              >{{ v$.email.$error ? v$.email.$errors[0].$message : "" }}</span
+            >
+          </div>
+          <div>
+            <Input
+              v-model="inputValues.password"
+              type="password"
+              placeholder="P@ssw0rd"
+            />
+            <span
+              class="text-xs text-red-500 font-medium"
+              v-if="v$.password.$error"
+              >{{
+                v$.password.$error ? v$.password.$errors[0].$message : ""
+              }}</span
+            >
+          </div>
+
           <Button @click="login">Log in</Button>
         </div>
         <div class="flex items-center text-stone-300 space-x-4 mb-4">

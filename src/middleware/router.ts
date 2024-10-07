@@ -17,6 +17,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       roles: [Roles.OWNER, Roles.CREW],
+      minViewLevel: [Roles.CREW],
       inNavigation: true,
       icon: `<svg
               xmlns="http://www.w3.org/2000/svg"
@@ -43,12 +44,24 @@ const routes: RouteRecordRaw[] = [
     meta: {
       requiresAuth: true,
       roles: [Roles.OWNER],
+      minViewLevel: [Roles.OWNER],
       inNavigation: true,
       icon: ``,
       navigationName: "Settings",
     },
   },
 ];
+
+const getRoutesForRole = (allowedRoles: Roles[]) => {
+  // using the minViewLevel to filter out the routes that are not allowed
+  return routes.filter((route) => {
+    if (route.meta?.minViewLevel) {
+      return (route.meta.minViewLevel as Roles[]).some(
+        (role) => allowedRoles.includes(role) && route.meta?.inNavigation
+      );
+    }
+  });
+};
 
 const router = createRouter({
   history: createWebHistory(),
@@ -83,5 +96,5 @@ router.beforeEach(async (to, _from, next) => {
     }
   }
 });
-export { routes };
+export { routes, getRoutesForRole };
 export default router;

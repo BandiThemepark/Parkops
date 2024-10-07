@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import Button from "@/components/ui/button/Button.vue";
-import router, { routes } from "../../middleware/router";
+import router, { routes, getRoutesForRole } from "../../middleware/router";
 import { Roles } from "../../middleware/authentication";
 import useAuthentication from "../../middleware/authentication";
 import { ref } from "vue";
+import { useRoute } from "vue-router";
 
 const userRole = ref<Roles>(Roles.NONE);
-
+const userouter = useRoute();
 (async () => {
   userRole.value = await useAuthentication.getUserRole();
 })();
@@ -30,26 +31,22 @@ const userRole = ref<Roles>(Roles.NONE);
 
         <h1 class="font-extrabold text-3xl">ParkOps</h1>
       </header>
+
+      <!-- Default crew section -->
       <section class="pb-2">
         <ul class="grid gap-2">
           <RouterLink
-            to="/home"
-            v-for="route in routes.filter(
-            (route) => route.meta?.inNavigation === true
-          ).filter((route) => {
-            return (route.meta?.roles as Roles[]).includes(Roles.CREW) && (route.meta?.roles as Roles[]).includes(Roles.OWNER)
-          })"
+            :to="route.path"
+            v-for="route in getRoutesForRole([Roles.CREW])"
             :key="route.path"
           >
             <Button
-              :variant="
-                router.currentRoute.value.path === route.path ? '' : 'ghost'
-              "
+              :variant="userouter.path === route.path ? '' : 'ghost'"
               size="sm"
               class="w-full justify-start space-x-4"
             >
               <span
-                v-if="(route.meta?.icon as string).trim()"
+                v-if="(route.meta?.icon as string)?.trim()"
                 v-html="route.meta?.icon"
               ></span>
               <span v-else>
@@ -73,24 +70,19 @@ const userRole = ref<Roles>(Roles.NONE);
         </ul>
       </section>
 
+      <!-- Owner section -->
       <section
         class="border-t border-t-stone-200 pt-2 -mx-4 px-4"
         v-if="userRole === Roles.OWNER"
       >
         <ul class="grid gap-2">
           <RouterLink
-            to="/home"
-            v-for="route in routes.filter(
-            (route) => route.meta?.inNavigation === true
-          ).filter((route) => {
-            return !(route.meta?.roles as Roles[]).includes(Roles.CREW) && (route.meta?.roles as Roles[]).includes(Roles.OWNER)
-          })"
+            :to="route.path"
+            v-for="route in getRoutesForRole([Roles.OWNER])"
             :key="route.path"
           >
             <Button
-              :variant="
-                router.currentRoute.value.path === route.path ? '' : 'ghost'
-              "
+              :variant="userouter.path === route.path ? '' : 'ghost'"
               size="sm"
               class="w-full justify-start space-x-4"
             >
@@ -98,6 +90,8 @@ const userRole = ref<Roles>(Roles.NONE);
                 v-if="(route.meta?.icon as string).trim()"
                 v-html="route.meta?.icon"
               ></span>
+
+              <!-- fallback icon -->
               <span v-else>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

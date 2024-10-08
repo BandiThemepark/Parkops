@@ -113,9 +113,8 @@ const userouter = useRoute();
         </ul>
       </section>
     </nav>
-    <div class="min-h-screen overflow-y-auto w-full p-16">
+    <div class="min-h-screen overflow-y-auto w-full p-4 lg:p-16">
       <slot />
-      peek a boo
     </div>
   </main>
 </template>

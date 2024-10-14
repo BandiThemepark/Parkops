@@ -7,9 +7,6 @@ const fetcData = async (
   return new Promise((resolve, reject) => {
     fetch(endpoint, {
       method: method,
-      headers: {
-        "Content-Type": "application/json",
-      },
     })
       .then(async (response) => {
         if (response.ok) {

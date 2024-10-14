@@ -15,4 +15,19 @@ const getGeneralServerStats = async () => {
   return [data, null];
 };
 
-export { getGeneralServerStats };
+const getServerInfo = async () => {
+  const [data, error] = await fetchData(
+    "get",
+    "https://api.mcsrvstat.us/3/play.bandithemepark.net",
+    {}
+  );
+
+  console.log(data, error);
+  if (error) {
+    return [null, error];
+  }
+
+  return [data, null];
+};
+
+export { getGeneralServerStats, getServerInfo };

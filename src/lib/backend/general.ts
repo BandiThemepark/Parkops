@@ -4,6 +4,7 @@ const getGeneralServerStats = async () => {
   const [data, error] = await fetchData(
     "get",
     "https://api.bandithemepark.net/settings/generalInformation",
+    true,
     {}
   );
 
@@ -19,6 +20,7 @@ const getServerInfo = async () => {
   const [data, error] = await fetchData(
     "get",
     "https://api.mcsrvstat.us/3/play.bandithemepark.net",
+    false,
     {}
   );
 

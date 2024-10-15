@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, PropType, ref } from "vue";
+import { computed, PropType, ref, watch } from "vue";
 import { TableColumn } from "./dynamictable";
 import {
   Table,
@@ -35,6 +35,14 @@ const props = defineProps({
   },
 });
 
+watch(
+  () => props.data,
+  (newData) => {
+    sortedData.value = newData;
+    pages.value = paginate(sortedData.value);
+  }
+);
+
 const sortedData = ref(props.data);
 const sortByColumn = ref<null | TableColumn>(null);
 const sortDirection = ref<"asc" | "desc">("asc");
@@ -67,7 +75,9 @@ const setFilter = (columnName: string) => {
   if (sortByColumn.value?.objectSelector === columnName) {
     sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
   } else {
-    sortByColumn.value = props.header.find((column) => column.objectSelector === columnName)!;
+    sortByColumn.value = props.header.find(
+      (column) => column.objectSelector === columnName
+    )!;
     sortDirection.value = "asc";
   }
   sortedData.value = props.data.sort((a, b) => {
@@ -82,7 +92,7 @@ const setFilter = (columnName: string) => {
     return 0;
   });
   pages.value = paginate(sortedData.value);
-}
+};
 
 const nextPage = () => {
   if (pages.value[currentPage.value + 1] !== undefined) {
@@ -121,7 +131,7 @@ const hasPrevPage = computed(() => {
           :class="{ 'text-right': column.alignedRight }"
         >
           <Button
-          @click="setFilter(column.objectSelector)"
+            @click="setFilter(column.objectSelector)"
             variant="ghost"
             v-if="column.sortable"
             size="sm"
@@ -129,38 +139,66 @@ const hasPrevPage = computed(() => {
               '-ml-3': !column.alignedRight,
               '-mr-3': column.alignedRight,
             }"
-            >
-            {{ column.name}}
+          >
+            {{ column.name }}
             <span v-if="sortByColumn?.name != column.name">
               <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="size-6"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
+                />
+              </svg>
+            </span>
+            <span
+              v-else-if="
+                sortByColumn.name == column.name && sortDirection == 'asc'
+              "
+              class="ml-1"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
-              />
-            </svg>
-          </span>
-            <span v-else-if="sortByColumn.name == column.name && sortDirection == 'asc'" class="ml-1">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-</svg>
-
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m4.5 15.75 7.5-7.5 7.5 7.5"
+                />
+              </svg>
             </span>
-            <span v-else-if="sortByColumn.name == column.name && sortDirection == 'desc'" class="ml-1">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-</svg>
-
+            <span
+              v-else-if="
+                sortByColumn.name == column.name && sortDirection == 'desc'
+              "
+              class="ml-1"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="size-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                />
+              </svg>
             </span>
-            
-           
           </Button>
           <span v-else>{{ column.name }}</span>
         </TableHead>
@@ -177,16 +215,13 @@ const hasPrevPage = computed(() => {
           v-for="column in props.header"
           :key="column.name"
           :class="{ 'text-right': column.alignedRight }"
-        >       
-          <span v-if="column.format">
-            {{ column.format((row as Record<string, any>)[column.objectSelector]) }}
-          </span>
-          <span v-else>
-            {{ (row as Record<string, any>)[column.objectSelector] }}
-          </span>
-          <!-- {{ row.format((row as Record<string, any>)[column.objectSelector]) }} -->
+        >
+        <div v-if="column.format != undefined" v-html="column.format((row as Record<string, any>)[column.objectSelector])">
 
-          <!-- {{ row.format != undefined ? row.format((row as Record<string, any>)[column.objectSelector]) : (row as Record<string, any>)[column.objectSelector] }} -->
+          </div>
+          <div v-else>
+            {{ (row as Record<string, any>)[column.objectSelector] }}
+          </div>
         </TableCell>
       </TableRow>
       <TableRow v-else v-for="i in maxLines" :key="i">
@@ -213,3 +248,4 @@ const hasPrevPage = computed(() => {
     >
   </div>
 </template>
+ 

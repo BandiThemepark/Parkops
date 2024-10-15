@@ -1,48 +1,60 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, h } from "vue";
 import DashboardProvider from "../components/custom/DashboardProvider.vue";
 import DynamicTable from "../components/custom/dynamictable/DynamicTable.vue";
+import { getAllPlayers } from "../lib/backend/players";
+import { Badge } from "../components/ui/badge";
+import { vnodeToString } from "../lib/utils";
 
-const testData = [
-  {
-    id: "1",
-    name: "John Doe",
-    firstJoined: "2021-01-01",
-    lastSeen: "2021-01-01",
-  },
-  {
-    id: "2",
-    name: "Jane Doe",
-    firstJoined: "2020-01-01",
-    lastSeen: "2021-01-01",
-  },
-  {
-    id: "3",
-    name: "John Smith",
-    firstJoined: "2019-01-01",
-    lastSeen: "2021-01-01",
-  },
-];
+const playerData = ref([]);
+const isLoading = ref(false);
+(async () => {
+  isLoading.value = true;
+  const data = await Promise.all([getAllPlayers()]);
+  playerData.value = data[0][0].data;
+  isLoading.value = false;
+})();
 
 const header = ref([
   {
-    name: "Name",
-    objectSelector: "name",
+    name: "Playername",
+    objectSelector: "playername",
     sortable: true,
   },
   {
-    name: "Joined since",
-    objectSelector: "firstJoined",
-    sortable: false,
-  },
-  {
-    name: "Last seen",
-    objectSelector: "lastSeen",
+    name: "Rank",
+    objectSelector: "rank",
     sortable: true,
-    alignedRight: true,
     format: (value: string) => {
-      if (!value) return "";
-      return new Date(value!).toLocaleTimeString();
+      return vnodeToString(
+        h(
+          Badge,
+          {},
+          {
+            default: () => h("span", {}, { default: () => value }),
+          }
+        )
+      );
+    },
+  },
+  {
+    name: "Last login",
+    objectSelector: "lastJoined",
+    sortable: true,
+    format: (value: string) => {
+      return new Date(value).toDateString();
+    },
+  },
+  {
+    name: "Status",
+    objectSelector: "onServer",
+    sortable: true,
+    format: (value: string) => {
+      if (value == "offline") {
+        return `<span class="text-red-500">Offline</span>`;
+      } else {
+        return `<span class="text-green-500">Online</span>`;
+      }
     },
   },
 ]);
@@ -52,9 +64,9 @@ const header = ref([
   <DashboardProvider>
     <DynamicTable
       :header="header"
-      :data="testData"
+      :data="playerData"
       :max-lines="10"
-      :is-loading="false"
+      :is-loading="isLoading"
     />
   </DashboardProvider>
 </template>

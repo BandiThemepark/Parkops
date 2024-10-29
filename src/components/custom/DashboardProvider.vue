@@ -3,11 +3,17 @@ import Button from "@/components/ui/button/Button.vue";
 import router, { routes, getRoutesForRole } from "../../middleware/router";
 import { Roles } from "../../middleware/authentication";
 import useAuthentication from "../../middleware/authentication";
-import { ref } from "vue";
+import { ref, defineProps } from "vue";
 import { useRoute } from "vue-router";
 
 const userRole = ref<Roles>(Roles.NONE);
 const userouter = useRoute();
+const props = defineProps({
+  hasPadding: {
+    type: Boolean,
+    default: true,
+  },
+});
 (async () => {
   userRole.value = await useAuthentication.getUserRole();
 })();
@@ -72,7 +78,7 @@ const userouter = useRoute();
 
       <!-- Owner section -->
       <section
-        class="border-t border-t-stone-200 pt-2 -mx-4 px-4"
+        class="border-t border-t-border pt-2 -mx-4 px-4"
         v-if="userRole === Roles.OWNER"
       >
         <ul class="grid gap-2">
@@ -113,7 +119,10 @@ const userouter = useRoute();
         </ul>
       </section>
     </nav>
-    <div class="min-h-screen overflow-y-auto w-full p-4 lg:p-16">
+    <div
+      class="min-h-screen overflow-y-auto w-full"
+      :class="{ 'p-4 lg:p-16': props.hasPadding }"
+    >
       <slot />
     </div>
   </main>

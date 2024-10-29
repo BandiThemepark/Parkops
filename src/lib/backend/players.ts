@@ -1,19 +1,13 @@
 import useAuthentication from "../../middleware/authentication";
-import fetchData from "../network";
-
+import axios from "axios";
 const getAllPlayers = async () => {
-  const [data, error] = await fetchData(
-    "get",
-    "https://api.bandithemepark.net/players",
-    {}
-  );
+  const data = await axios.get("https://api.bandithemepark.net/players", {
+    headers: {
+      Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+    },
+  });
 
-  console.log(data, error);
-  if (error) {
-    return [null, error];
-  }
-
-  return [data, null];
+  return data.data;
 };
 
 export { getAllPlayers };

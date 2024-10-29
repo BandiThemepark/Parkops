@@ -11,7 +11,7 @@ const isLoading = ref(false);
 (async () => {
   isLoading.value = true;
   const data = await Promise.all([getAllPlayers()]);
-  playerData.value = data[0][0].data;
+  playerData.value = data[0].data;
   isLoading.value = false;
 })();
 

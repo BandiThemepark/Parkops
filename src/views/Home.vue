@@ -67,7 +67,7 @@ const serverInfo = ref<null | any>(null);
         </CardHeader>
         <CardContent>
           <h1 v-if="!isLoading" class="text-3xl font-bold">
-            {{ generalServerStats[0].uniquePlayers }}
+            {{ generalServerStats.uniquePlayers }}
           </h1>
           <Skeleton v-else class="w-full h-12" />
         </CardContent>
@@ -99,7 +99,7 @@ const serverInfo = ref<null | any>(null);
         </CardHeader>
         <CardContent>
           <h1 v-if="!isLoading" class="text-3xl font-bold">
-            {{ serverInfo[0].players.online }}
+            {{ serverInfo.players.online }}
           </h1>
           <Skeleton v-else class="w-full h-12" />
         </CardContent>
@@ -131,7 +131,7 @@ const serverInfo = ref<null | any>(null);
         </CardHeader>
         <CardContent>
           <h1 v-if="!isLoading" class="text-3xl font-bold">
-            {{ generalServerStats[0].soldItems }}
+            {{ generalServerStats.soldItems }}
           </h1>
           <Skeleton v-else class="w-full h-12" />
         </CardContent>
@@ -163,7 +163,7 @@ const serverInfo = ref<null | any>(null);
         </CardHeader>
         <CardContent>
           <h1 v-if="!isLoading" class="text-3xl font-bold">
-            {{ generalServerStats[0].totalValue.sum }}
+            {{ generalServerStats.totalValue.sum }}
           </h1>
           <Skeleton v-else class="w-full h-12" />
         </CardContent>

@@ -47,7 +47,7 @@ const props = defineProps({
             :key="route.path"
           >
             <Button
-              :variant="userouter.path === route.path ? '' : 'ghost'"
+              :variant="userouter.path === route.path ? 'default' : 'ghost'"
               size="sm"
               class="w-full justify-start space-x-4"
             >
@@ -88,7 +88,7 @@ const props = defineProps({
             :key="route.path"
           >
             <Button
-              :variant="userouter.path === route.path ? '' : 'ghost'"
+              :variant="userouter.path === route.path ? 'default' : 'ghost'"
               size="sm"
               class="w-full justify-start space-x-4"
             >

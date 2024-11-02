@@ -1,0 +1,13 @@
+name: Bandi Parkops
+on:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - name: Start
+        run: |
+          docker-compose -f ./docker-compose.yml up -d --build

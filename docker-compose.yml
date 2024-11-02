@@ -1,0 +1,26 @@
+version: "3"
+services:
+  parkops:
+    restart: on-failure
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    networks:
+      - traefik
+    expose:
+      - 80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.parkops.entrypoints=http,https"
+      - "traefik.http.routers.parkops.rule=Host(`parkops.bandithemepark.net`)"
+      - "traefik.http.routers.parkops.tls.certresolver=letsencrypt"
+      - traefik.http.routers.parkops.tls=true
+      - "traefik.http.middlewares.parkops-redirectscheme.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.parkops-redirectscheme.redirectscheme.permanent=true"
+      - "traefik.http.routers.parkops.middlewares=audio-redirectscheme"
+      - traefik.http.services.parkops.loadbalancer.server.port=80
+      - "traefik.docker.network=traefik"
+
+networks:
+  traefik:
+    external: true

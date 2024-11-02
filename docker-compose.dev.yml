@@ -1,0 +1,9 @@
+version: "3"
+services:
+  parkops:
+    restart: on-failure
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 2000:80

@@ -31,6 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Cosmetic } from "@/lib/backendTypes";
 
 const types = ref([
   { name: "hat", displayName: "Hat", tabName: "Hats" },
@@ -44,7 +45,7 @@ const types = ref([
   { name: "boots", displayName: "Boots", tabName: "Boots" },
 ]);
 
-const cosmeticsData = ref([]);
+const cosmeticsData = ref<Cosmetic[]>([]);
 const isLoading = ref(false);
 
 const loadCosmetics = async () => {

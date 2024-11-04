@@ -124,11 +124,13 @@ const createCategory = async () => {
   // console.log(error);
   clearCateogryForm();
   await initialDataLoad();
+  isCategoryOpen.value = false;
 };
 
 const removeAchievementCategory = async (id: string) => {
   const data = await deleteAchievementCategory(id);
   await initialDataLoad();
+  isEditCategoryOpen.value = false;
 };
 
 const updateCategory = async () => {
@@ -273,7 +275,7 @@ const clickCategory = (category: AchievementCategory) => {
                       <SelectGroup>
                         <SelectLabel> Categories </SelectLabel>
                         <SelectItem value="NORMAL">Normal</SelectItem>
-                        <SelectItem value="SECRET">Secret</SelectItem>
+                        <SelectItem value="EVENT">Event</SelectItem>
                         <SelectItem value="HIDDEN">Hidden</SelectItem>
                         <SelectItem value="HISTORICAL">Historical</SelectItem>
                       </SelectGroup>
@@ -449,7 +451,7 @@ const clickCategory = (category: AchievementCategory) => {
                               <SelectGroup>
                                 <SelectLabel> Categories </SelectLabel>
                                 <SelectItem value="NORMAL">Normal</SelectItem>
-                                <SelectItem value="SECRET">Secret</SelectItem>
+                                <SelectItem value="EVENT">Event</SelectItem>
                                 <SelectItem value="HIDDEN">Hidden</SelectItem>
                                 <SelectItem value="HISTORICAL"
                                   >Historical</SelectItem

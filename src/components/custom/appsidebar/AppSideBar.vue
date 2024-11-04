@@ -37,11 +37,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ChevronsUpDownIcon, LogOutIcon } from "lucide-vue-next";
+import { useToast } from "@/components/ui/toast";
 const userouter = useRoute();
 const { state } = useSidebar();
 const currentUser = ref<null | User>(null);
 const isLoading = ref(false);
 
+const { toast } = useToast();
 (async () => {
   isLoading.value = true;
   currentUser.value = await useAuthentication.getUser();
@@ -50,6 +52,10 @@ const isLoading = ref(false);
 
 const logout = () => {
   useAuthentication.logout();
+  toast({
+    title: "Logged out",
+    description: "You have been logged out",
+  });
   setTimeout(() => {
     router.push({ name: "login" });
   }, 1000);

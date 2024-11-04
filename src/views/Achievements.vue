@@ -60,6 +60,8 @@ import {
 // Validation
 import { createCateogryValidation } from "../lib/validation/validations";
 
+import { toast, useToast } from "@/components/ui/toast/use-toast";
+
 const isLoading = ref(false);
 const categories = ref<AchievementCategory[]>([]);
 
@@ -125,12 +127,20 @@ const createCategory = async () => {
   clearCateogryForm();
   await initialDataLoad();
   isCategoryOpen.value = false;
+  toast({
+    title: "Category created",
+    description: "The category has been created successfully",
+  });
 };
 
 const removeAchievementCategory = async (id: string) => {
   const data = await deleteAchievementCategory(id);
   await initialDataLoad();
   isEditCategoryOpen.value = false;
+  toast({
+    title: "Category removed",
+    description: "The category has been removed successfully",
+  });
 };
 
 const updateCategory = async () => {

@@ -6,7 +6,9 @@ import useAuthentication from "../../middleware/authentication";
 import { ref, defineProps } from "vue";
 import { useRoute } from "vue-router";
 import { User } from "firebase/auth";
+import { useToast } from "../ui/toast";
 
+const { toast } = useToast();
 const userRole = ref<Roles>(Roles.NONE);
 const userouter = useRoute();
 const currentUser = ref<null | User>(null);
@@ -23,6 +25,10 @@ const props = defineProps({
 
 const logout = () => {
   useAuthentication.logout();
+  toast({
+    title: "Logged out",
+    description: "You have been logged out. Goodbye! 👋",
+  });
   setTimeout(() => {
     router.push({ name: "login" });
   }, 1000);

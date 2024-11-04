@@ -3,17 +3,15 @@ import {
   AchievementCategory,
   CreateAchievementCategory,
 } from "../backendTypes";
+import BANDITHEMEPARK_API from "../network";
 import axios from "axios";
 
 const getAchievementCategories = async () => {
-  const data = await axios.get(
-    "https://api.bandithemepark.net/achievements/categories",
-    {
-      headers: {
-        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
-      },
-    }
-  );
+  const data = await axios.get(`${BANDITHEMEPARK_API}achievements/categories`, {
+    headers: {
+      Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+    },
+  });
 
   console.log(data);
   return data.data;
@@ -23,7 +21,7 @@ const createAchievementCategory = async (
   category: CreateAchievementCategory
 ) => {
   const data = await axios.post(
-    "https://api.bandithemepark.net/achievements/categories",
+    `${BANDITHEMEPARK_API}achievements/categories`,
     category,
     {
       headers: {
@@ -38,7 +36,7 @@ const createAchievementCategory = async (
 
 const updateAchievementCategory = async (category: AchievementCategory) => {
   const data = await axios.put(
-    `https://api.bandithemepark.net/achievements/categories/${category.id}`,
+    `${BANDITHEMEPARK_API}achievements/categories/${category.id}`,
     category,
     {
       headers: {
@@ -52,14 +50,11 @@ const updateAchievementCategory = async (category: AchievementCategory) => {
 };
 
 const deleteAchievementCategory = async (categoryId: string) =>
-  axios.delete(
-    `https://api.bandithemepark.net/achievements/categories/${categoryId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
-      },
-    }
-  );
+  axios.delete(`${BANDITHEMEPARK_API}achievements/categories/${categoryId}`, {
+    headers: {
+      Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+    },
+  });
 export {
   getAchievementCategories,
   createAchievementCategory,

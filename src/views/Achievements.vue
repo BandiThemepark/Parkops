@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 // Vue Core Imports
-import { ref } from "vue";
+import { ref, watch } from "vue";
 
 // UI Components
 import Button from "../components/ui/button/Button.vue";
@@ -91,6 +91,7 @@ const toEditCategory = ref({
 const clickEditCategory = (category: AchievementCategory) => {
   console.log(category);
   toEditCategory.value = category;
+  isEditCategoryOpen.value = true;
 };
 
 const createCategoryValues = ref({
@@ -104,6 +105,9 @@ const createCategoryValues = ref({
 
 const v$category = useVuelidate(createCateogryValidation, createCategoryValues);
 const v$editcategory = useVuelidate(createCateogryValidation, toEditCategory);
+
+const isCategoryOpen = ref();
+const isEditCategoryOpen = ref();
 
 const createCategory = async () => {
   v$category.value.$validate();
@@ -139,7 +143,9 @@ const updateCategory = async () => {
     toEditCategory.value as AchievementCategory
   );
   clearUpdateForm();
+
   await initialDataLoad();
+  isEditCategoryOpen.value = false;
 };
 
 const clearCateogryForm = () => {
@@ -177,6 +183,171 @@ const clickCategory = (category: AchievementCategory) => {
 </script>
 
 <template>
+  <DialogRoot>
+    <Sheet
+      @update:open="onUpdateOpenStateCategories"
+      v-model:open="isEditCategoryOpen"
+    >
+      <SheetContent>
+        <SheetHeader class="mb-4">
+          <SheetTitle>Edit {{ toEditCategory?.displayName }}</SheetTitle>
+          <SheetDescription>
+            Edit the category to group your achievements.
+          </SheetDescription>
+        </SheetHeader>
+        <div>
+          <Form class="space-y-6" @submit="updateCategory">
+            <FormField name="displayname">
+              <FormItem>
+                <FormLabel>Displayname</FormLabel>
+                <Input
+                  v-model="toEditCategory.displayName"
+                  placeholder="John Doe"
+                />
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$editcategory.displayName.$error"
+                  >{{
+                    v$editcategory.displayName.$error
+                      ? v$editcategory.displayName.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <FormField name="searchName">
+              <FormItem>
+                <FormLabel>Searchname</FormLabel>
+                <FormControl>
+                  <Input
+                    v-model="toEditCategory.searchName"
+                    placeholder="john_doe"
+                  />
+                </FormControl>
+                <FormDescription>
+                  The name to search for ingame
+                </FormDescription>
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$editcategory.searchName.$error"
+                  >{{
+                    v$editcategory.searchName.$error
+                      ? v$editcategory.searchName.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <FormField name="description">
+              <FormItem>
+                <FormLabel> Description </FormLabel>
+                <FormControl>
+                  <Input
+                    v-model="toEditCategory.description"
+                    placeholder="Description"
+                  />
+                </FormControl>
+                <FormDescription>
+                  A short description of the category (Add && for a new line)
+                </FormDescription>
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$editcategory.description.$error"
+                  >{{
+                    v$editcategory.description.$error
+                      ? v$editcategory.description.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <FormField name="categorytype">
+              <FormItem>
+                <FormLabel> Category type </FormLabel>
+                <FormControl>
+                  <Select v-model="toEditCategory.type">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel> Categories </SelectLabel>
+                        <SelectItem value="NORMAL">Normal</SelectItem>
+                        <SelectItem value="SECRET">Secret</SelectItem>
+                        <SelectItem value="HIDDEN">Hidden</SelectItem>
+                        <SelectItem value="HISTORICAL">Historical</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <span
+                    class="text-xs text-red-500 font-medium"
+                    v-if="v$editcategory.type.$error"
+                    >{{
+                      v$editcategory.type.$error
+                        ? v$editcategory.type.$errors[0].$message
+                        : ""
+                    }}</span
+                  >
+                </FormControl>
+              </FormItem>
+            </FormField>
+            <FormField name="icon">
+              <FormItem>
+                <FormLabel> Icon </FormLabel>
+                <FormControl>
+                  <Input
+                    v-model="toEditCategory.icon"
+                    placeholder="DIAMOND_SWORD"
+                  />
+                </FormControl>
+                <FormDescription>
+                  Please use the Minecraft material name
+                </FormDescription>
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$editcategory.icon.$error"
+                  >{{
+                    v$editcategory.icon.$error
+                      ? v$editcategory.icon.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <FormField name="modelData">
+              <FormItem>
+                <FormLabel> Icon modeldata </FormLabel>
+                <FormControl>
+                  <Input
+                    v-model="toEditCategory.iconModelData"
+                    placeholder="10010110"
+                  />
+                </FormControl>
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$editcategory.iconModelData.$error"
+                  >{{
+                    v$editcategory.iconModelData.$error
+                      ? v$editcategory.iconModelData.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <div class="flex justify-between">
+              <Button
+                @click="removeAchievementCategory(toEditCategory.id)"
+                type="reset"
+                variant="destructive"
+                >Remove</Button
+              >
+              <Button type="submit"> Update </Button>
+            </div>
+          </Form>
+        </div>
+      </SheetContent>
+    </Sheet>
+  </DialogRoot>
   <DashboardProvider :has-padding="false">
     <div class="flex h-full">
       <aside class="w-[400px] h-full border-r border-r-border">
@@ -185,7 +356,10 @@ const clickCategory = (category: AchievementCategory) => {
         >
           <h1 class="text-lg font-bold">Categories</h1>
           <DialogRoot>
-            <Sheet @update:open="onUpdateOpenStateCategories">
+            <Sheet
+              @update:open="onUpdateOpenStateCategories"
+              v-model:open="isCategoryOpen"
+            >
               <SheetTrigger>
                 <Button>Create</Button>
               </SheetTrigger>
@@ -305,7 +479,7 @@ const clickCategory = (category: AchievementCategory) => {
                           />
                         </FormControl>
                         <FormDescription>
-                          Plase use the Minecraft material name
+                          Please use the Minecraft material name
                         </FormDescription>
                         <span
                           class="text-xs text-red-500 font-medium"
@@ -382,208 +556,34 @@ const clickCategory = (category: AchievementCategory) => {
                     {{ category.description.replace(/&&/g, "\n") }}
                   </p>
                 </div>
-
-                <DialogRoot>
-                  <Sheet @update:open="onUpdateOpenStateCategories">
-                    <SheetTrigger @click.stop="clickEditCategory(category)">
-                      <Button size="icon" variant="outline" class="size-8"
-                        ><svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="currentColor"
-                          class="size-4"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-                          />
-                        </svg>
-                      </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                      <SheetHeader class="mb-4">
-                        <SheetTitle
-                          >Edit {{ toEditCategory?.displayName }}</SheetTitle
-                        >
-                        <SheetDescription>
-                          Edit the category to group your achievements.
-                        </SheetDescription>
-                      </SheetHeader>
-                      <div>
-                        <Form class="space-y-6" @submit="updateCategory">
-                          <FormField name="displayname">
-                            <FormItem>
-                              <FormLabel>Displayname</FormLabel>
-                              <Input
-                                v-model="toEditCategory.displayName"
-                                placeholder="John Doe"
-                              />
-                              <span
-                                class="text-xs text-red-500 font-medium"
-                                v-if="v$editcategory.displayName.$error"
-                                >{{
-                                  v$editcategory.displayName.$error
-                                    ? v$editcategory.displayName.$errors[0]
-                                        .$message
-                                    : ""
-                                }}</span
-                              >
-                            </FormItem>
-                          </FormField>
-                          <FormField name="searchName">
-                            <FormItem>
-                              <FormLabel>Searchname</FormLabel>
-                              <FormControl>
-                                <Input
-                                  v-model="toEditCategory.searchName"
-                                  placeholder="john_doe"
-                                />
-                              </FormControl>
-                              <FormDescription>
-                                The name to search for ingame
-                              </FormDescription>
-                              <span
-                                class="text-xs text-red-500 font-medium"
-                                v-if="v$editcategory.searchName.$error"
-                                >{{
-                                  v$editcategory.searchName.$error
-                                    ? v$editcategory.searchName.$errors[0]
-                                        .$message
-                                    : ""
-                                }}</span
-                              >
-                            </FormItem>
-                          </FormField>
-                          <FormField name="description">
-                            <FormItem>
-                              <FormLabel> Description </FormLabel>
-                              <FormControl>
-                                <Input
-                                  v-model="toEditCategory.description"
-                                  placeholder="Description"
-                                />
-                              </FormControl>
-                              <FormDescription>
-                                A short description of the category (Add && for
-                                a new line)
-                              </FormDescription>
-                              <span
-                                class="text-xs text-red-500 font-medium"
-                                v-if="v$editcategory.description.$error"
-                                >{{
-                                  v$editcategory.description.$error
-                                    ? v$editcategory.description.$errors[0]
-                                        .$message
-                                    : ""
-                                }}</span
-                              >
-                            </FormItem>
-                          </FormField>
-                          <FormField name="categorytype">
-                            <FormItem>
-                              <FormLabel> Category type </FormLabel>
-                              <FormControl>
-                                <Select v-model="toEditCategory.type">
-                                  <SelectTrigger>
-                                    <SelectValue
-                                      placeholder="Select a category"
-                                    />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectGroup>
-                                      <SelectLabel> Categories </SelectLabel>
-                                      <SelectItem value="NORMAL"
-                                        >Normal</SelectItem
-                                      >
-                                      <SelectItem value="SECRET"
-                                        >Secret</SelectItem
-                                      >
-                                      <SelectItem value="HIDDEN"
-                                        >Hidden</SelectItem
-                                      >
-                                      <SelectItem value="HISTORICAL"
-                                        >Historical</SelectItem
-                                      >
-                                    </SelectGroup>
-                                  </SelectContent>
-                                </Select>
-                                <span
-                                  class="text-xs text-red-500 font-medium"
-                                  v-if="v$editcategory.type.$error"
-                                  >{{
-                                    v$editcategory.type.$error
-                                      ? v$editcategory.type.$errors[0].$message
-                                      : ""
-                                  }}</span
-                                >
-                              </FormControl>
-                            </FormItem>
-                          </FormField>
-                          <FormField name="icon">
-                            <FormItem>
-                              <FormLabel> Icon </FormLabel>
-                              <FormControl>
-                                <Input
-                                  v-model="toEditCategory.icon"
-                                  placeholder="DIAMOND_SWORD"
-                                />
-                              </FormControl>
-                              <FormDescription>
-                                Plase use the Minecraft material name
-                              </FormDescription>
-                              <span
-                                class="text-xs text-red-500 font-medium"
-                                v-if="v$editcategory.icon.$error"
-                                >{{
-                                  v$editcategory.icon.$error
-                                    ? v$editcategory.icon.$errors[0].$message
-                                    : ""
-                                }}</span
-                              >
-                            </FormItem>
-                          </FormField>
-                          <FormField name="modelData">
-                            <FormItem>
-                              <FormLabel> Icon modeldata </FormLabel>
-                              <FormControl>
-                                <Input
-                                  v-model="toEditCategory.iconModelData"
-                                  placeholder="10010110"
-                                />
-                              </FormControl>
-                              <span
-                                class="text-xs text-red-500 font-medium"
-                                v-if="v$editcategory.iconModelData.$error"
-                                >{{
-                                  v$editcategory.iconModelData.$error
-                                    ? v$editcategory.iconModelData.$errors[0]
-                                        .$message
-                                    : ""
-                                }}</span
-                              >
-                            </FormItem>
-                          </FormField>
-                          <div class="flex justify-between">
-                            <Button
-                              @click="removeAchievementCategory(category.id)"
-                              type="reset"
-                              variant="destructive"
-                              >Remove</Button
-                            >
-                            <Button type="submit"> Update </Button>
-                          </div>
-                        </Form>
-                      </div>
-                    </SheetContent>
-                  </Sheet>
-                </DialogRoot>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  class="size-8"
+                  @click="clickEditCategory(category)"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-4"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                    />
+                  </svg>
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div class="flex space-x-2">
+              <Badge variant="secondary" class="mb-2">{{
+                category.type
+              }}</Badge>
+
+              <div class="flex gap-2 flex-wrap">
                 <Badge variant="outline"
                   >{{
                     category.achievements?.filter(

@@ -1,24 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-::-webkit-scrollbar {
-  width: 0.5rem;
-  height: 0.5rem;
-}
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 0.5rem;
-  background: rgb(112, 112, 112);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -91,7 +74,6 @@
     --destructive-foreground: 60 9.1% 97.8%;
 
     --ring: 24 5.7% 82.9%;
-
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;

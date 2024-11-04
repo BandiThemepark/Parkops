@@ -33,13 +33,13 @@ const serverInfo = ref<null | any>(null);
 
 <template>
   <DashboardProvider>
-    <h1 class="font-bold text-3xl">
+    <!-- <h1 class="font-bold text-3xl">
       <span v-if="!isLoading"
         >Howdy <span>{{ user?.displayName?.split(" ")[0] }}</span></span
       >
       <Skeleton v-else class="w-[200px] h-5" />
-    </h1>
-    <main class="grid md:grid-cols-6 lg:grid-cols-9 xl:grid-cols-12 mt-8 gap-6">
+    </h1> -->
+    <main class="grid md:grid-cols-6 lg:grid-cols-9 xl:grid-cols-12 gap-6">
       <Card class="col-span-3">
         <CardHeader>
           <CardDescription

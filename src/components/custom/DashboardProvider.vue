@@ -10,7 +10,7 @@ import SidebarProvider from "../ui/sidebar/SidebarProvider.vue";
 import SidebarTrigger from "../ui/sidebar/SidebarTrigger.vue";
 import AppSideBar from "./appsidebar/AppSideBar.vue";
 import Separator from "../ui/separator/Separator.vue";
-
+import SidebarInset from "../ui/sidebar/SidebarInset.vue";
 const userRole = ref<Roles>(Roles.NONE);
 const userouter = useRoute();
 const currentUser = ref<null | User>(null);
@@ -36,16 +36,29 @@ const logout = () => {
   <SidebarProvider>
     <AppSideBar />
     <main class="flex flex-col w-full">
-      <div class="border-b h-min w-full border-border p-4 flex items-center">
-        <SidebarTrigger />
-        <Separator orientation="vertical" />
-      </div>
-      <div
-        class="overflow-y-auto w-full"
-        :class="{ 'p-4 lg:p-16': props.hasPadding }"
-      >
-        <slot />
-      </div>
+      <SidebarInset>
+        <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger class="-ml-1" />
+          <Separator orientation="vertical" class="mr-2 h-4" />
+          <!-- <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem class="hidden md:block">
+                <BreadcrumbLink href="#">
+                  Building Your Application
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator class="hidden md:block" />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb> -->
+        </header>
+
+        <main :class="{ 'p-4 lg:p-8': props.hasPadding }">
+          <slot />
+        </main>
+      </SidebarInset>
     </main>
   </SidebarProvider>
 </template>

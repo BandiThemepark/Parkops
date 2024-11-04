@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-icons/vue": "^1.0.0",
     "@tanstack/vue-table": "^8.20.5",
     "@vee-validate/zod": "^4.14.3",
     "@vuelidate/core": "^2.0.3",
@@ -19,8 +20,8 @@
     "clsx": "^2.1.1",
     "firebase": "^10.13.2",
     "lucide-vue-next": "^0.446.0",
-    "radix-vue": "^1.9.6",
-    "tailwind-merge": "^2.5.2",
+    "radix-vue": "^1.9.8",
+    "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "vee-validate": "^4.14.3",
     "vue": "^3.4.37",

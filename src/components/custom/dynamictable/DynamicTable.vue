@@ -74,7 +74,13 @@ const paginate = (data: any[]) => {
   }
   return pages;
 };
+const getValueBySelector = (obj: any, selector: string) => {
+    const x =  selector?.split('.').reduce((acc, key) => {
+      return acc && acc[key]
+    }, obj);
 
+    return x;
+  }
 const setFilter = (columnName: string) => {
   if (sortByColumn.value?.objectSelector === columnName) {
     sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
@@ -101,18 +107,36 @@ const setFilter = (columnName: string) => {
     return isMatch;
 
   })
+  
 
+  // function getValueBySelector(obj, selector) {
+  //   console.log(obj, selector)
+  //   return selector?.split('.').reduce((acc, key) => {
+  //   console.log(acc, key)
+  //   return acc && acc[key]
+  //   }, obj);
+  // }
 
   // Now we have the filtered data, we need to order them by the selected column
   const sortedData = filteredData.sort((a, b) => {
+
     // @ts-ignore
-    if (a[sortByColumn.value?.objectSelector] < b[sortByColumn.value?.objectSelector]) {
+    if (getValueBySelector(a, sortByColumn.value?.objectSelector) < getValueBySelector(b, sortByColumn.value?.objectSelector)) {
       return sortDirection.value === "asc" ? -1 : 1;
     }
     // @ts-ignore
-    if (a[sortByColumn.value?.objectSelector] > b[sortByColumn.value?.objectSelector]) {
+    if (getValueBySelector(a, sortByColumn.value?.objectSelector) > getValueBySelector(b, sortByColumn.value?.objectSelector)) {
       return sortDirection.value === "asc" ? 1 : -1;
     }
+
+    // // @ts-ignore
+    // if (a[sortByColumn.value?.objectSelector] < b[sortByColumn.value?.objectSelector]) {
+    //   return sortDirection.value === "asc" ? -1 : 1;
+    // }
+    // // @ts-ignore
+    // if (a[sortByColumn.value?.objectSelector] > b[sortByColumn.value?.objectSelector]) {
+    //   return sortDirection.value === "asc" ? 1 : -1;
+    // }
     return 0;
   });
 
@@ -142,7 +166,6 @@ const prevPage = () => {
 (async () => {
   sortedData.value = props.data;
   pages.value = paginate(sortedData.value);
-  console.log(pages.value);
 })();
 
 const hasNextPage = computed(() => {
@@ -249,11 +272,12 @@ const hasPrevPage = computed(() => {
           :key="column.name"
           :class="{ 'text-right': column.alignedRight }"
         >
-        <div v-if="column.format != undefined" v-html="column.format((row as Record<string, any>)[column.objectSelector])">
-
+        <!-- implement getValueBySelector -->
+         
+        <div v-if="column.format != undefined" v-html="column.format(getValueBySelector((row as Record<string, any>),column.objectSelector))">
           </div>
           <div v-else>
-            {{ (row as Record<string, any>)[column.objectSelector] }}
+            {{getValueBySelector((row as Record<string, any>),column.objectSelector)}}
           </div>
         </TableCell>
       </TableRow>

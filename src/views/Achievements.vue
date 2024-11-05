@@ -362,7 +362,7 @@ const clickCategory = (category: AchievementCategory) => {
   </DialogRoot>
   <DashboardProvider :has-padding="false">
     <div class="flex h-full">
-      <aside class="w-[400px] h-full border-r border-r-border">
+      <aside class="w-[400px] flex flex-col h-full border-r border-r-border">
         <div
           class="flex items-center w-full justify-between border-b border-b-border p-4"
         >
@@ -531,95 +531,99 @@ const clickCategory = (category: AchievementCategory) => {
             </Sheet>
           </DialogRoot>
         </div>
-        <div class="px-4 pt-4 border-t border-t-primary-foreground grid gap-4">
-          <Card
-            v-if="isLoading"
-            class="hover:cursor-pointer hover:bg-accent transition-colors"
-            v-for="i in 5"
-            :key="i"
-          >
-            <CardHeader>
-              <div class="w-full">
-                <div>
-                  <Skeleton class="w-[200px] h-4 mb-2" />
-                  <Skeleton class="w-full h-3" />
+        <div
+          class="px-4 pt-4 h-[calc(100vh-128px)] overflow-y-auto border-t border-t-primary-foreground"
+        >
+          <div class="grid gap-4">
+            <Card
+              v-if="isLoading"
+              class="hover:cursor-pointer hover:bg-accent transition-colors"
+              v-for="i in 5"
+              :key="i"
+            >
+              <CardHeader>
+                <div class="w-full">
+                  <div>
+                    <Skeleton class="w-[200px] h-4 mb-2" />
+                    <Skeleton class="w-full h-3" />
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div class="flex space-x-2">
-                <Skeleton class="h-3 w-[50px]" />
-                <Skeleton class="h-3 w-[50px]" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card
-            @click="clickCategory(category)"
-            v-if="!isLoading && categories.length > 0"
-            class="hover:cursor-pointer hover:bg-accent transition-colors"
-            v-for="category in categories"
-            :key="category.id"
-          >
-            <CardHeader>
-              <div class="flex justify-between">
-                <div class="max-w-[80%]">
-                  <h1 class="font-semibold">{{ category.displayName }}</h1>
-                  <p class="text-sm font-medium text-muted-foreground">
-                    {{ category.description.replace(/&&/g, "\n") }}
-                  </p>
+              </CardHeader>
+              <CardContent>
+                <div class="flex space-x-2">
+                  <Skeleton class="h-3 w-[50px]" />
+                  <Skeleton class="h-3 w-[50px]" />
                 </div>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  class="size-8"
-                  @click="clickEditCategory(category)"
-                  ><svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-4"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-                    />
-                  </svg>
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Badge variant="secondary" class="mb-2">{{
-                category.type
-              }}</Badge>
+              </CardContent>
+            </Card>
+            <Card
+              @click="clickCategory(category)"
+              v-if="!isLoading && categories.length > 0"
+              class="hover:cursor-pointer hover:bg-accent transition-colors"
+              v-for="category in categories"
+              :key="category.id"
+            >
+              <CardHeader>
+                <div class="flex justify-between">
+                  <div class="max-w-[80%]">
+                    <h1 class="font-semibold">{{ category.displayName }}</h1>
+                    <p class="text-sm font-medium text-muted-foreground">
+                      {{ category.description.replace(/&&/g, "\n") }}
+                    </p>
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    class="size-8"
+                    @click="clickEditCategory(category)"
+                    ><svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="size-4"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                      />
+                    </svg>
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <Badge variant="secondary" class="mb-2">{{
+                  category.type
+                }}</Badge>
 
-              <div class="flex gap-2 flex-wrap">
-                <Badge variant="outline"
-                  >{{
-                    category.achievements?.filter(
-                      (a: Achievement) => a.type == AchievementType.NORMAL
-                    ).length
-                  }}
-                  achievements</Badge
-                >
-                <Badge variant="outline"
-                  >{{
-                    category.achievements?.filter(
-                      (a: Achievement) => a.type == AchievementType.SECRET
-                    ).length
-                  }}
-                  secrets</Badge
-                >
-              </div>
-            </CardContent>
-          </Card>
+                <div class="flex gap-2 flex-wrap">
+                  <Badge variant="outline"
+                    >{{
+                      category.achievements?.filter(
+                        (a: Achievement) => a.type == AchievementType.NORMAL
+                      ).length
+                    }}
+                    achievements</Badge
+                  >
+                  <Badge variant="outline"
+                    >{{
+                      category.achievements?.filter(
+                        (a: Achievement) => a.type == AchievementType.SECRET
+                      ).length
+                    }}
+                    secrets</Badge
+                  >
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </aside>
       <main class="w-full">
         <div
-          class="flex items-center w-full justify-between border-b border-b-border p-4"
+          class="flex items-centerfull w-full justify-between border-b border-b-border p-4"
         >
           <h1 class="text-lg font-bold">
             Achievements for
@@ -627,47 +631,49 @@ const clickCategory = (category: AchievementCategory) => {
           </h1>
           <Button>Create achievement</Button>
         </div>
-        <div class="grid grid-cols-4 gap-4 p-4">
-          <Card
-            v-for="achievement in selectedCategory?.achievements"
-            :key="achievement.id"
-            class="flex flex-col justify-between"
-          >
-            <CardHeader>
-              <div class="flex justify-between">
-                <div class="max-w-[80%]">
-                  <h1 class="font-semibold">{{ achievement.displayName }}</h1>
-                  <p class="text-sm font-medium text-muted-foreground">
-                    {{ achievement.description.replace(/&&/g, "\n") }}
-                  </p>
+        <div class="p-4 h-[calc(100vh-128px)]">
+          <div class="grid grid-cols-4 gap-4 w-full">
+            <Card
+              v-for="achievement in selectedCategory?.achievements"
+              :key="achievement.id"
+              class="flex flex-col justify-between"
+            >
+              <CardHeader>
+                <div class="flex justify-between">
+                  <div class="max-w-[80%]">
+                    <h1 class="font-semibold">{{ achievement.displayName }}</h1>
+                    <p class="text-sm font-medium text-muted-foreground">
+                      {{ achievement.description.replace(/&&/g, "\n") }}
+                    </p>
+                  </div>
+                  <Button size="icon" variant="outline" class="size-8"
+                    ><svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="size-4"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
+                      />
+                    </svg>
+                  </Button>
                 </div>
-                <Button size="icon" variant="outline" class="size-8"
-                  ><svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-4"
+              </CardHeader>
+              <CardContent>
+                <div class="flex space-x-2">
+                  <Badge variant="outline"
+                    >{{ achievement.rewardValue }}
+                    {{ achievement.rewardType }}</Badge
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125"
-                    />
-                  </svg>
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div class="flex space-x-2">
-                <Badge variant="outline"
-                  >{{ achievement.rewardValue }}
-                  {{ achievement.rewardType }}</Badge
-                >
-              </div>
-            </CardContent>
-          </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     </div>

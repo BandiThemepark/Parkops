@@ -62,7 +62,10 @@ const logout = () => {
           </Breadcrumb> -->
         </header>
 
-        <main :class="{ 'p-4 lg:p-8': props.hasPadding }">
+        <main
+          :class="{ 'p-4 lg:p-8': props.hasPadding }"
+          class="max-h-[calc(100vh-64px)] overflow-y-hidden"
+        >
           <slot />
         </main>
       </SidebarInset>

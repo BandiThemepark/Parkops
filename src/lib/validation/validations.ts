@@ -22,3 +22,30 @@ export const createCateogryValidation = {
     minValue: minValue(0),
   },
 };
+
+export const createAchievementValidation = {
+  searchName: {
+    required,
+  },
+  displayName: {
+    required,
+  },
+  description: {
+    required,
+  },
+  type: {
+    required,
+  },
+  triggerType: {
+    required,
+  },
+  triggerValue: {
+    required,
+  },
+  rewardValue: {
+    required,
+  },
+  rewardType: {
+    required,
+  },
+};

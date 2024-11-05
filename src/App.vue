@@ -6,4 +6,6 @@ import { checkApiStatus } from "./lib/backend/general";
 })();
 </script>
 
-<template><Toaster /> <RouterView /></template>
+<template>
+  <div class=""><Toaster /> <RouterView /></div>
+</template>

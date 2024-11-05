@@ -21,7 +21,34 @@ export type Achievement = {
   searchName: string;
   displayName: string;
   description: string;
-  category: AchievementCategory;
+  category?: AchievementCategory;
+  // players?: Player[];
+  type: AchievementType;
+  triggerType: AchievementTriggerType;
+  triggerValue: string;
+  rewardType: AchievementRewardType;
+  rewardValue: string;
+};
+
+export type UpdateAchievement = {
+  id: string;
+  searchName: string;
+  displayName: string;
+  description: string;
+  categoryId: string;
+  // players?: Player[];
+  type: string;
+  triggerType: string;
+  triggerValue: string;
+  rewardType: string;
+  rewardValue: string;
+};
+
+export type CreateAchievement = {
+  searchName: string;
+  displayName: string;
+  description: string;
+  categoryId: string;
   // players?: Player[];
   type: AchievementType;
   triggerType: AchievementTriggerType;

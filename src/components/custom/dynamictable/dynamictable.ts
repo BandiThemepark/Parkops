@@ -6,4 +6,9 @@ type TableColumn = {
   format?: (value: any) => string;
 };
 
-export type { TableColumn };
+type ColumnFilter = {
+  column: string;
+  value: string;
+};
+
+export type { TableColumn, ColumnFilter };

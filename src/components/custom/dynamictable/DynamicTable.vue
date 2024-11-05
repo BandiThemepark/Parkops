@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, PropType, ref, watch } from "vue";
-import { TableColumn } from "./dynamictable";
+import { ColumnFilter, TableColumn } from "./dynamictable";
 import {
   Table,
   TableBody,
@@ -33,6 +33,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  filters:{
+    type: Array as PropType<ColumnFilter[]>,
+    default: []
+  }
 });
 
 watch(
@@ -80,19 +84,48 @@ const setFilter = (columnName: string) => {
     )!;
     sortDirection.value = "asc";
   }
-  sortedData.value = props.data.sort((a, b) => {
-    const aValue = a[sortByColumn.value!.objectSelector];
-    const bValue = b[sortByColumn.value!.objectSelector];
-    if (aValue < bValue) {
+
+  // filter "props.data" by the filter prop
+
+  const filteredData = props.data.filter((row) => {
+
+    let isMatch = true;
+    props.filters.forEach((filter) => {
+      if (filter.value !== "") {
+        if (!(row[filter.column] as string).toLowerCase().includes(filter.value.toLowerCase()) ) {
+          isMatch = false;
+        }
+      }
+    });
+
+    return isMatch;
+
+  })
+
+
+  // Now we have the filtered data, we need to order them by the selected column
+  const sortedData = filteredData.sort((a, b) => {
+    // @ts-ignore
+    if (a[sortByColumn.value?.objectSelector] < b[sortByColumn.value?.objectSelector]) {
       return sortDirection.value === "asc" ? -1 : 1;
     }
-    if (aValue > bValue) {
+    // @ts-ignore
+    if (a[sortByColumn.value?.objectSelector] > b[sortByColumn.value?.objectSelector]) {
       return sortDirection.value === "asc" ? 1 : -1;
     }
     return 0;
   });
-  pages.value = paginate(sortedData.value);
+
+
+  pages.value = paginate(sortedData);
 };
+
+watch(
+  () => props.filters,
+  (newFilters) => {
+    setFilter(sortByColumn.value?.objectSelector ?? "");
+  }
+);
 
 const nextPage = () => {
   if (pages.value[currentPage.value + 1] !== undefined) {

@@ -47,7 +47,9 @@ import useVuelidate from "@vuelidate/core";
 import {
   createAchievement,
   createAchievementCategory,
+  deleteAchievement,
   deleteAchievementCategory,
+  editAchievement,
   getAchievementCategories,
   updateAchievementCategory,
 } from "../lib/backend/achievements";
@@ -57,6 +59,7 @@ import {
   AchievementType,
   Achievement,
   CreateAchievement,
+  UpdateAchievement,
 } from "../lib/backendTypes";
 
 // Validation
@@ -98,6 +101,19 @@ const toEditCategory = ref({
   icon: "",
   iconModelData: 0,
 });
+
+const toEditAchievement = ref({
+  id: "",
+  categoryId: "",
+  displayName: "",
+  searchName: "",
+  description: "",
+  type: "",
+  triggerType: "",
+  triggerValue: "",
+  rewardType: "",
+  rewardValue: "",
+});
 const clickEditCategory = (category: AchievementCategory) => {
   console.log(category);
   toEditCategory.value = category;
@@ -125,16 +141,33 @@ const createAchievementValues = ref({
   rewardValue: "",
 });
 
+const editAchievementValues = ref({
+  categoryId: "",
+  displayName: "",
+  searchName: "",
+  description: "",
+  type: "",
+  triggerType: "",
+  triggerValue: "",
+  rewardType: "",
+  rewardValue: "",
+});
+
 const v$category = useVuelidate(createCateogryValidation, createCategoryValues);
 const v$editcategory = useVuelidate(createCateogryValidation, toEditCategory);
 const v$createAcievement = useVuelidate(
   createAchievementValidation,
   createAchievementValues
 );
+const v$editAchievement = useVuelidate(
+  createAchievementValidation,
+  toEditAchievement
+);
 
 const isCategoryOpen = ref();
 const isEditCategoryOpen = ref();
 const isCreateAchievementOpen = ref();
+const isEditAchievementOpen = ref();
 
 const createCategory = async () => {
   v$category.value.$validate();
@@ -175,8 +208,35 @@ const createAchievementSubmnit = async () => {
   await initialDataLoad();
   toast({
     title: "Achievement created",
-    description: "The Achievement has been created successfully",
+    description: "The achievement has been edited successfully",
   });
+};
+
+const editAchievementSubmit = async () => {
+  v$editAchievement.value.$validate();
+  if (v$editAchievement.value.$error) {
+    console.log(v$editAchievement.value.$errors);
+    return;
+  }
+
+  const data = await editAchievement(
+    toEditAchievement.value as UpdateAchievement
+  );
+
+  // console.log(error);
+  isEditAchievementOpen.value = false;
+
+  clearEditAchievementForm();
+  await initialDataLoad();
+  toast({
+    title: "Achievement Edited",
+    description: "The achievement has been edited successfully",
+  });
+};
+
+const clickEditAchievement = (achievement: UpdateAchievement) => {
+  toEditAchievement.value = achievement;
+  isEditAchievementOpen.value = true;
 };
 
 const removeAchievementCategory = async (id: string) => {
@@ -243,11 +303,36 @@ const clearCreateAchievementForm = () => {
   };
 };
 
+const clearEditAchievementForm = () => {
+  editAchievementValues.value = {
+    categoryId: "",
+    displayName: "",
+    searchName: "",
+    description: "",
+    type: "",
+    triggerType: "",
+    triggerValue: "",
+    rewardType: "",
+    rewardValue: "",
+  };
+};
+
 const onUpdateOpenStateCategories = (value: boolean) => {
   // console.log(value);
   if (value == false) {
     clearCateogryForm();
   }
+};
+
+const clickRemoveAchievement = async (id: string) => {
+  const data = await deleteAchievement(id);
+  isEditAchievementOpen.value = false;
+
+  await initialDataLoad();
+  toast({
+    title: "Achievement removed",
+    description: "The achievement has been removed successfully",
+  });
 };
 
 const clickCategory = (category: AchievementCategory) => {
@@ -281,6 +366,242 @@ const onChangeAchievementTriggerType = (value: string) => {
 </script>
 
 <template>
+  <DialogRoot>
+    <Sheet v-model:open="isEditAchievementOpen">
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Edit Achievement</SheetTitle>
+        </SheetHeader>
+        <div>
+          <Form class="space-y-6" @submit="editAchievementSubmit">
+            <FormField name="displayName">
+              <FormItem>
+                <FormLabel> DisplayName </FormLabel>
+                <FormControl>
+                  <Input
+                    v-model="toEditAchievement.displayName"
+                    placeholder="New area discovered"
+                  />
+                </FormControl>
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$createAcievement.displayName.$error"
+                  >{{
+                    v$editAchievement.displayName.$error
+                      ? v$editAchievement.displayName.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <FormField name="searchName">
+              <FormItem>
+                <FormLabel> SearchName </FormLabel>
+                <FormControl>
+                  <Input
+                    v-model="toEditAchievement.searchName"
+                    placeholder="new_area"
+                  />
+                </FormControl>
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$editAchievement.searchName.$error"
+                  >{{
+                    v$editAchievement.searchName.$error
+                      ? v$editAchievement.searchName.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <FormField name="description">
+              <FormItem>
+                <FormLabel> Description </FormLabel>
+                <FormControl>
+                  <Input
+                    v-model="toEditAchievement.description"
+                    placeholder="Welcome to the new area"
+                  />
+                </FormControl>
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$editAchievement.description.$error"
+                  >{{
+                    v$editAchievement.description.$error
+                      ? v$editAchievement.description.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <FormField name="achievementType">
+              <FormItem>
+                <FormLabel> Achievedment type </FormLabel>
+                <FormControl>
+                  <Select v-model="toEditAchievement.type">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel> Types </SelectLabel>
+                        <SelectItem value="NORMAL">Normal</SelectItem>
+                        <SelectItem value="EVENT">Event</SelectItem>
+                        <SelectItem value="SECRET">Secret</SelectItem>
+                        <SelectItem value="HISTORICAL">Historical</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <span
+                    class="text-xs text-red-500 font-medium"
+                    v-if="v$editAchievement.type.$error"
+                    >{{
+                      v$editAchievement.type.$error
+                        ? v$editAchievement.type.$errors[0].$message
+                        : ""
+                    }}</span
+                  >
+                </FormControl>
+              </FormItem>
+            </FormField>
+            <Separator />
+            <div>
+              <h1 class="text-lg font-semibold">Trigger</h1>
+              <p class="text-sm opacity-50">
+                Pay close attention on what you do here
+              </p>
+            </div>
+
+            <FormField name="achievementTriggerType">
+              <FormItem>
+                <FormLabel> Trigger type </FormLabel>
+                <FormControl>
+                  <Select
+                    v-model="toEditAchievement.triggerType"
+                    @update:model-value="onChangeAchievementTriggerType"
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel> Types </SelectLabel>
+                        <SelectItem value="REGION_ENTER"
+                          >Region enter</SelectItem
+                        >
+                        <SelectItem value="RIDECOUNTER_INCREASE"
+                          >Ridecounter increase</SelectItem
+                        >
+                        <SelectItem value="SPECIAL">Special</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <span
+                    class="text-xs text-red-500 font-medium"
+                    v-if="v$editAchievement.triggerType.$error"
+                    >{{
+                      v$editAchievement.triggerType.$error
+                        ? v$editAchievement.triggerType.$errors[0].$message
+                        : ""
+                    }}</span
+                  >
+                </FormControl>
+              </FormItem>
+            </FormField>
+            <FormField name="triggervalue">
+              <FormItem>
+                <FormLabel> Trigger value </FormLabel>
+                <FormControl>
+                  <Input
+                    v-model="toEditAchievement.triggerValue"
+                    :placeholder="triggerValuePlaceholder"
+                  />
+                </FormControl>
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$editAchievement.triggerValue.$error"
+                  >{{
+                    v$editAchievement.triggerValue.$error
+                      ? v$editAchievement.triggerValue.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <Separator />
+            <div>
+              <h1 class="text-lg font-semibold">Reward</h1>
+              <p class="text-sm opacity-50">
+                Pay close attention on what you do here
+              </p>
+            </div>
+            <FormField name="rewardType">
+              <FormItem>
+                <FormLabel> Reward type </FormLabel>
+                <FormControl>
+                  <Select
+                    v-model="toEditAchievement.rewardType"
+                    @update:model-value="onChangeAchievementRewardType"
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel> Types </SelectLabel>
+                        <SelectItem value="COINS">Coins</SelectItem>
+                        <SelectItem value="ITEM">Item</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <span
+                    class="text-xs text-red-500 font-medium"
+                    v-if="v$editAchievement.rewardType.$error"
+                    >{{
+                      v$editAchievement.rewardType.$error
+                        ? v$editAchievement.rewardType.$errors[0].$message
+                        : ""
+                    }}</span
+                  >
+                </FormControl>
+              </FormItem>
+            </FormField>
+            <FormField name="rewardValue">
+              <FormItem>
+                <FormLabel> Reward value </FormLabel>
+                <FormControl>
+                  <Input
+                    v-model="toEditAchievement.rewardValue"
+                    :placeholder="rewardValuePlaceholder"
+                  />
+                </FormControl>
+                <span
+                  class="text-xs text-red-500 font-medium"
+                  v-if="v$editAchievement.rewardValue.$error"
+                  >{{
+                    v$editAchievement.rewardValue.$error
+                      ? v$editAchievement.rewardValue.$errors[0].$message
+                      : ""
+                  }}</span
+                >
+              </FormItem>
+            </FormField>
+            <div class="flex justify-between">
+              <Button
+                @click="clickRemoveAchievement(toEditAchievement.id)"
+                type="reset"
+                variant="destructive"
+                >Remove</Button
+              >
+              <Button @click="editAchievementSubmit()" type="reset"
+                >Update</Button
+              >
+            </div>
+          </Form>
+        </div>
+      </SheetContent>
+    </Sheet>
+  </DialogRoot>
   <DialogRoot>
     <Sheet
       @update:open="onUpdateOpenStateCategories"
@@ -989,7 +1310,13 @@ const onChangeAchievementTriggerType = (value: string) => {
                       {{ achievement.description.replace(/&&/g, "\n") }}
                     </p>
                   </div>
-                  <Button size="icon" variant="outline" class="size-8"
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    class="size-8"
+                    @click="
+                      clickEditAchievement(achievement as UpdateAchievement)
+                    "
                     ><svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

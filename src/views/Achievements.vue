@@ -45,6 +45,7 @@ import useVuelidate from "@vuelidate/core";
 
 // Backend Imports
 import {
+  createAchievement,
   createAchievementCategory,
   deleteAchievementCategory,
   getAchievementCategories,
@@ -55,12 +56,19 @@ import {
   CreateAchievementCategory,
   AchievementType,
   Achievement,
+  CreateAchievement,
 } from "../lib/backendTypes";
 
 // Validation
-import { createCateogryValidation } from "../lib/validation/validations";
+import {
+  createAchievementValidation,
+  createCateogryValidation,
+} from "../lib/validation/validations";
 
 import { toast, useToast } from "@/components/ui/toast/use-toast";
+import Label from "@/components/ui/label/Label.vue";
+import Separator from "@/components/ui/separator/Separator.vue";
+import Textarea from "@/components/ui/textarea/Textarea.vue";
 
 const isLoading = ref(false);
 const categories = ref<AchievementCategory[]>([]);
@@ -69,8 +77,8 @@ const initialDataLoad = async () => {
   isLoading.value = true;
   const data = await Promise.all([getAchievementCategories()]);
   categories.value = data[0].data;
-
-  console.log(categories.value);
+  selectedCategory.value = data[0].data[0];
+  createAchievementValues.value.categoryId = data[0].data[0].id;
 
   isLoading.value = false;
 };
@@ -105,11 +113,28 @@ const createCategoryValues = ref({
   iconModelData: 0,
 });
 
+const createAchievementValues = ref({
+  categoryId: "",
+  displayName: "",
+  searchName: "",
+  description: "",
+  type: "",
+  triggerType: "",
+  triggerValue: "",
+  rewardType: "",
+  rewardValue: "",
+});
+
 const v$category = useVuelidate(createCateogryValidation, createCategoryValues);
 const v$editcategory = useVuelidate(createCateogryValidation, toEditCategory);
+const v$createAcievement = useVuelidate(
+  createAchievementValidation,
+  createAchievementValues
+);
 
 const isCategoryOpen = ref();
 const isEditCategoryOpen = ref();
+const isCreateAchievementOpen = ref();
 
 const createCategory = async () => {
   v$category.value.$validate();
@@ -123,20 +148,42 @@ const createCategory = async () => {
   );
   console.log(createCategoryValues.value);
   console.log(data);
+  isCategoryOpen.value = false;
+
   // console.log(error);
   clearCateogryForm();
   await initialDataLoad();
-  isCategoryOpen.value = false;
   toast({
     title: "Category created",
     description: "The category has been created successfully",
   });
 };
 
+const createAchievementSubmnit = async () => {
+  v$createAcievement.value.$validate();
+  if (v$createAcievement.value.$error) {
+    return;
+  }
+  const data = await createAchievement(
+    createAchievementValues.value as CreateAchievement
+  );
+
+  // console.log(error);
+  isCreateAchievementOpen.value = false;
+
+  clearCreateAchievementForm();
+  await initialDataLoad();
+  toast({
+    title: "Achievement created",
+    description: "The Achievement has been created successfully",
+  });
+};
+
 const removeAchievementCategory = async (id: string) => {
   const data = await deleteAchievementCategory(id);
-  await initialDataLoad();
   isEditCategoryOpen.value = false;
+
+  await initialDataLoad();
   toast({
     title: "Category removed",
     description: "The category has been removed successfully",
@@ -182,6 +229,20 @@ const clearUpdateForm = () => {
   };
 };
 
+const clearCreateAchievementForm = () => {
+  createAchievementValues.value = {
+    categoryId: selectedCategory.value!.id,
+    displayName: "",
+    searchName: "",
+    description: "",
+    type: "",
+    triggerType: "",
+    triggerValue: "",
+    rewardType: "",
+    rewardValue: "",
+  };
+};
+
 const onUpdateOpenStateCategories = (value: boolean) => {
   // console.log(value);
   if (value == false) {
@@ -191,6 +252,31 @@ const onUpdateOpenStateCategories = (value: boolean) => {
 
 const clickCategory = (category: AchievementCategory) => {
   selectedCategory.value = category;
+  createAchievementValues.value.categoryId = category.id;
+};
+
+const rewardValuePlaceholder = ref("Idk what youri wants here");
+
+const onChangeAchievementRewardType = (value: string) => {
+  // createAchievementValues.value.rewardType = value;
+  if (value == "COINS") {
+    rewardValuePlaceholder.value = "0";
+  } else if (value == "ITEM") {
+    rewardValuePlaceholder.value = "Cosmetic Name (searchName)";
+  }
+};
+
+const triggerValuePlaceholder = ref("Idk what youri wants here");
+
+const onChangeAchievementTriggerType = (value: string) => {
+  // createAchievementValues.value.triggerType = value;
+  if (value == "REGION_ENTER") {
+    triggerValuePlaceholder.value = "Region (searchName)";
+  } else if (value == "RIDECOUNTER_INCREASE") {
+    triggerValuePlaceholder.value = "Ride (searchName (See Notion))";
+  } else if (value == "SPECIAL") {
+    triggerValuePlaceholder.value = "Customkey";
+  }
 };
 </script>
 
@@ -625,11 +711,268 @@ const clickCategory = (category: AchievementCategory) => {
         <div
           class="flex items-centerfull w-full justify-between border-b border-b-border p-4"
         >
-          <h1 class="text-lg font-bold">
-            Achievements for
-            {{ selectedCategory ? selectedCategory.displayName : "..." }}
-          </h1>
-          <Button>Create achievement</Button>
+          <div class="flex">
+            <h1 class="text-lg font-bold">
+              Achievements for
+              {{ selectedCategory ? selectedCategory.displayName : "..." }}
+            </h1>
+            <p class="text-sm ml-1 font-semibold opacity-40">
+              ({{ selectedCategory?.achievements?.length }})
+            </p>
+          </div>
+
+          <DialogRoot>
+            <Sheet v-model:open="isCreateAchievementOpen">
+              <SheetTrigger :disabled="!selectedCategory">
+                <Button :disabled="!selectedCategory">Create</Button>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Create Achievement</SheetTitle>
+                    <SheetDescription>
+                      Create a new achievement for
+                      {{ selectedCategory?.displayName }}.
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div>
+                    <Form class="space-y-6">
+                      <FormField name="displayName">
+                        <FormItem>
+                          <FormLabel> DisplayName </FormLabel>
+                          <FormControl>
+                            <Input
+                              v-model="createAchievementValues.displayName"
+                              placeholder="New area discovered"
+                            />
+                          </FormControl>
+                          <span
+                            class="text-xs text-red-500 font-medium"
+                            v-if="v$createAcievement.displayName.$error"
+                            >{{
+                              v$createAcievement.displayName.$error
+                                ? v$createAcievement.displayName.$errors[0]
+                                    .$message
+                                : ""
+                            }}</span
+                          >
+                        </FormItem>
+                      </FormField>
+                      <FormField name="searchName">
+                        <FormItem>
+                          <FormLabel> SearchName </FormLabel>
+                          <FormControl>
+                            <Input
+                              v-model="createAchievementValues.searchName"
+                              placeholder="new_area"
+                            />
+                          </FormControl>
+                          <span
+                            class="text-xs text-red-500 font-medium"
+                            v-if="v$createAcievement.searchName.$error"
+                            >{{
+                              v$createAcievement.searchName.$error
+                                ? v$createAcievement.searchName.$errors[0]
+                                    .$message
+                                : ""
+                            }}</span
+                          >
+                        </FormItem>
+                      </FormField>
+                      <FormField name="description">
+                        <FormItem>
+                          <FormLabel> Description </FormLabel>
+                          <FormControl>
+                            <Input
+                              v-model="createAchievementValues.description"
+                              placeholder="Welcome to the new area"
+                            />
+                          </FormControl>
+                          <span
+                            class="text-xs text-red-500 font-medium"
+                            v-if="v$createAcievement.description.$error"
+                            >{{
+                              v$createAcievement.description.$error
+                                ? v$createAcievement.description.$errors[0]
+                                    .$message
+                                : ""
+                            }}</span
+                          >
+                        </FormItem>
+                      </FormField>
+                      <FormField name="achievementType">
+                        <FormItem>
+                          <FormLabel> Achievedment type </FormLabel>
+                          <FormControl>
+                            <Select v-model="createAchievementValues.type">
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectLabel> Types </SelectLabel>
+                                  <SelectItem value="NORMAL">Normal</SelectItem>
+                                  <SelectItem value="EVENT">Event</SelectItem>
+                                  <SelectItem value="SECRET">Secret</SelectItem>
+                                  <SelectItem value="HISTORICAL"
+                                    >Historical</SelectItem
+                                  >
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                            <span
+                              class="text-xs text-red-500 font-medium"
+                              v-if="v$createAcievement.type.$error"
+                              >{{
+                                v$createAcievement.type.$error
+                                  ? v$createAcievement.type.$errors[0].$message
+                                  : ""
+                              }}</span
+                            >
+                          </FormControl>
+                        </FormItem>
+                      </FormField>
+                      <Separator />
+                      <div>
+                        <h1 class="text-lg font-semibold">Trigger</h1>
+                        <p class="text-sm opacity-50">
+                          Pay close attention on what you do here
+                        </p>
+                      </div>
+
+                      <FormField name="achievementTriggerType">
+                        <FormItem>
+                          <FormLabel> Trigger type </FormLabel>
+                          <FormControl>
+                            <Select
+                              v-model="createAchievementValues.triggerType"
+                              @update:model-value="
+                                onChangeAchievementTriggerType
+                              "
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectLabel> Types </SelectLabel>
+                                  <SelectItem value="REGION_ENTER"
+                                    >Region enter</SelectItem
+                                  >
+                                  <SelectItem value="RIDECOUNTER_INCREASE"
+                                    >Ridecounter increase</SelectItem
+                                  >
+                                  <SelectItem value="SPECIAL"
+                                    >Special</SelectItem
+                                  >
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                            <span
+                              class="text-xs text-red-500 font-medium"
+                              v-if="v$createAcievement.triggerType.$error"
+                              >{{
+                                v$createAcievement.triggerType.$error
+                                  ? v$createAcievement.triggerType.$errors[0]
+                                      .$message
+                                  : ""
+                              }}</span
+                            >
+                          </FormControl>
+                        </FormItem>
+                      </FormField>
+                      <FormField name="triggervalue">
+                        <FormItem>
+                          <FormLabel> Trigger value </FormLabel>
+                          <FormControl>
+                            <Input
+                              v-model="createAchievementValues.triggerValue"
+                              :placeholder="triggerValuePlaceholder"
+                            />
+                          </FormControl>
+                          <span
+                            class="text-xs text-red-500 font-medium"
+                            v-if="v$createAcievement.triggerValue.$error"
+                            >{{
+                              v$createAcievement.triggerValue.$error
+                                ? v$createAcievement.triggerValue.$errors[0]
+                                    .$message
+                                : ""
+                            }}</span
+                          >
+                        </FormItem>
+                      </FormField>
+                      <Separator />
+                      <div>
+                        <h1 class="text-lg font-semibold">Reward</h1>
+                        <p class="text-sm opacity-50">
+                          Pay close attention on what you do here
+                        </p>
+                      </div>
+                      <FormField name="rewardType">
+                        <FormItem>
+                          <FormLabel> Reward type </FormLabel>
+                          <FormControl>
+                            <Select
+                              v-model="createAchievementValues.rewardType"
+                              @update:model-value="
+                                onChangeAchievementRewardType
+                              "
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectLabel> Types </SelectLabel>
+                                  <SelectItem value="COINS">Coins</SelectItem>
+                                  <SelectItem value="ITEM">Item</SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                            <span
+                              class="text-xs text-red-500 font-medium"
+                              v-if="v$createAcievement.rewardType.$error"
+                              >{{
+                                v$createAcievement.rewardType.$error
+                                  ? v$createAcievement.rewardType.$errors[0]
+                                      .$message
+                                  : ""
+                              }}</span
+                            >
+                          </FormControl>
+                        </FormItem>
+                      </FormField>
+                      <FormField name="rewardValue">
+                        <FormItem>
+                          <FormLabel> Reward value </FormLabel>
+                          <FormControl>
+                            <Input
+                              v-model="createAchievementValues.rewardValue"
+                              :placeholder="rewardValuePlaceholder"
+                            />
+                          </FormControl>
+                          <span
+                            class="text-xs text-red-500 font-medium"
+                            v-if="v$createAcievement.rewardValue.$error"
+                            >{{
+                              v$createAcievement.rewardValue.$error
+                                ? v$createAcievement.rewardValue.$errors[0]
+                                    .$message
+                                : ""
+                            }}</span
+                          >
+                        </FormItem>
+                      </FormField>
+                      <div class="flex justify-between">
+                        <Button @click="createAchievementSubmnit()" type="reset"
+                          >Create</Button
+                        >
+                      </div>
+                    </Form>
+                  </div>
+                </SheetContent>
+              </SheetTrigger>
+            </Sheet>
+          </DialogRoot>
         </div>
         <div class="p-4 h-[calc(100vh-128px)]">
           <div class="grid grid-cols-4 gap-4 w-full">

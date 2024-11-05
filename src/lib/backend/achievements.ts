@@ -1,6 +1,8 @@
 import useAuthentication from "../../middleware/authentication";
 import {
+  Achievement,
   AchievementCategory,
+  CreateAchievement,
   CreateAchievementCategory,
 } from "../backendTypes";
 import BANDITHEMEPARK_API from "../network";
@@ -23,6 +25,21 @@ const createAchievementCategory = async (
   const data = await axios.post(
     `${BANDITHEMEPARK_API}achievements/categories`,
     category,
+    {
+      headers: {
+        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+      },
+    }
+  );
+
+  console.log(data);
+  return data.data;
+};
+
+const createAchievement = async (achievement: CreateAchievement) => {
+  const data = await axios.post(
+    `${BANDITHEMEPARK_API}achievements/achievements`,
+    achievement,
     {
       headers: {
         Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
@@ -60,4 +77,5 @@ export {
   createAchievementCategory,
   updateAchievementCategory,
   deleteAchievementCategory,
+  createAchievement,
 };

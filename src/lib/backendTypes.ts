@@ -30,6 +30,19 @@ export type Achievement = {
   rewardValue: string;
 };
 
+export type CreateAchievement = {
+  searchName: string;
+  displayName: string;
+  description: string;
+  categoryId: string;
+  // players?: Player[];
+  type: AchievementType;
+  triggerType: AchievementTriggerType;
+  triggerValue: string;
+  rewardType: AchievementRewardType;
+  rewardValue: string;
+};
+
 export enum AchievementCategoryType {
   NORMAL = "NORMAL",
   SPECIAL = "SPECIAL",

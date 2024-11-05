@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import Button from "@/components/ui/button/Button.vue";
 import {
   Sidebar,
   SidebarContent,
@@ -7,22 +6,13 @@ import {
   SidebarGroup,
   SidebarHeader,
   SidebarGroupLabel,
-  SidebarGroupContent,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  useSidebar,
 } from "../../../components/ui/sidebar";
 import router, { getRoutesForRole } from "@/middleware/router";
 import useAuthentication, { Roles } from "@/middleware/authentication";
-import { useRoute } from "vue-router";
-import {
-  ChevronRightIcon,
-  DashboardIcon,
-  GearIcon,
-  HomeIcon,
-} from "@radix-icons/vue";
-import { routes } from "@/middleware/router";
+import { ChevronRightIcon, DashboardIcon } from "@radix-icons/vue";
 import { ref } from "vue";
 import { User } from "firebase/auth";
 import Avatar from "@/components/ui/avatar/Avatar.vue";
@@ -35,11 +25,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
-import { ChevronsUpDownIcon, LogOutIcon } from "lucide-vue-next";
 import { useToast } from "@/components/ui/toast";
-const userouter = useRoute();
-const { state } = useSidebar();
+
 const currentUser = ref<null | User>(null);
 const isLoading = ref(false);
 

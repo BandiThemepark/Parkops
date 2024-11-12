@@ -4,7 +4,7 @@ import type {
   SortingState,
   VisibilityState,
   ColumnFiltersState,
-  Column,
+  ExpandedState,
 } from "@tanstack/vue-table";
 import {
   Table,
@@ -22,6 +22,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
+  getExpandedRowModel,
 } from "@tanstack/vue-table";
 import {
   DropdownMenu,
@@ -82,6 +83,7 @@ const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 
 const columnVisibility = ref<VisibilityState>({});
+const expanded = ref<ExpandedState>({});
 
 const table = useVueTable({
   get data() {
@@ -99,6 +101,8 @@ const table = useVueTable({
   getFilteredRowModel: getFilteredRowModel(),
   onColumnVisibilityChange: (updaterOrValue) =>
     valueUpdater(updaterOrValue, columnVisibility),
+  getExpandedRowModel: getExpandedRowModel(),
+  onExpandedChange: (updaterOrValue) => valueUpdater(updaterOrValue, expanded),
 
   state: {
     get sorting() {
@@ -109,6 +113,9 @@ const table = useVueTable({
     },
     get columnVisibility() {
       return columnVisibility.value;
+    },
+    get expanded() {
+      return expanded.value;
     },
   },
 });
@@ -158,18 +165,26 @@ const table = useVueTable({
       </TableHeader>
       <TableBody>
         <template v-if="table.getRowModel().rows?.length">
-          <TableRow
-            v-for="row in table.getRowModel().rows"
-            :key="row.id"
-            :data-state="row.getIsSelected() ? 'selected' : undefined"
-          >
-            <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-              <FlexRender
-                :render="cell.column.columnDef.cell"
-                :props="cell.getContext()"
-              />
-            </TableCell>
-          </TableRow>
+          <template v-if="table.getRowModel().rows?.length">
+            <template v-for="row in table.getRowModel().rows" :key="row.id">
+              <TableRow
+                :data-state="row.getIsSelected() ? 'selected' : undefined"
+              >
+                <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                  <FlexRender
+                    :render="cell.column.columnDef.cell"
+                    :props="cell.getContext()"
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow v-if="row.getIsExpanded()" data-state="selected">
+                <TableCell :colspan="row.getAllCells().length">
+                  <!-- {{ JSON.stringify(row.original) }} -->
+                  <slot :rowData="row.original" />
+                </TableCell>
+              </TableRow>
+            </template>
+          </template>
         </template>
         <template v-else>
           <TableRow>

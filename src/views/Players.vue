@@ -56,7 +56,17 @@ const isLoading = ref(false);
           columnId: 'onServer',
         },
       ]"
-    />
+      v-slot="{ rowData }"
+    >
+      <div>
+        <div class="overflow-hidden rounded-lg w-fit">
+          <img
+            :src="`https://crafatar.com/avatars/${rowData.uuid}?size=100&default=MHF_Steve&overlay`"
+            alt=""
+          />
+        </div>
+      </div>
+    </DynaTable>
 
     <!-- <Card>
       <CardHeader>

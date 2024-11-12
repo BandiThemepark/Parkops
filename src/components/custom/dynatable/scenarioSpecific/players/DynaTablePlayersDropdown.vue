@@ -10,12 +10,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Player } from "@/lib/backendTypes";
 import { MoreHorizontal } from "lucide-vue-next";
+import { PropType } from "vue";
 
-const props = defineProps<Player>();
+const props = defineProps({
+  player: {
+    type: Object as PropType<Player>,
+    required: true,
+  },
+});
 
 function copy(id: string) {
   navigator.clipboard.writeText(id);
 }
+
+defineEmits<{
+  (e: "expand"): void;
+}>();
 </script>
 
 <template>
@@ -28,9 +38,10 @@ function copy(id: string) {
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-      <DropdownMenuItem @click="copy(props.id)">
+      <DropdownMenuItem @click="copy(player.id)">
         Copy payment ID
       </DropdownMenuItem>
+      <DropdownMenuItem @click="$emit('expand')"> Expand </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem>View customer</DropdownMenuItem>
       <DropdownMenuItem>View payment details</DropdownMenuItem>

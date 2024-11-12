@@ -3,6 +3,7 @@ import { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
 import DynaTableColumnHeader from "../../DynaTableColumnHeader.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
+import DynaTablePlayersDropdown from "./DynaTablePlayersDropdown.vue";
 
 export const playerColums: ColumnDef<Player>[] = [
   {
@@ -41,6 +42,19 @@ export const playerColums: ColumnDef<Player>[] = [
       h(DynaTableColumnHeader, { column: column, title: "First visit" }),
     cell: ({ row, column }) => {
       return new Date(row.getValue(column.id)).toLocaleDateString();
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const player = row.original;
+
+      return h(
+        "div",
+        { class: "relative text-right" },
+        h(DynaTablePlayersDropdown, { player, onExpand: row.toggleExpanded })
+      );
     },
   },
 ];

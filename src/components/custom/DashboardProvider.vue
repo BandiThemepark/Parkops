@@ -42,7 +42,7 @@ const logout = () => {
 <template>
   <SidebarProvider>
     <AppSideBar />
-    <main class="flex flex-col w-full">
+    <main class="flex flex-col w-full overflow-hidden">
       <SidebarInset>
         <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger class="-ml-1" />
@@ -64,7 +64,7 @@ const logout = () => {
 
         <main
           :class="{ 'p-4 lg:p-8': props.hasPadding }"
-          class="max-h-[calc(100vh-64px)] overflow-y-hidden"
+          class="max-h-[calc(100vh-64px)] overflow-y-auto"
         >
           <slot />
         </main>

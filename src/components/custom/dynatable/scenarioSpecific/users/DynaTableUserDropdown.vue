@@ -12,21 +12,21 @@ import { Player } from "@/lib/backendTypes";
 import {
   MoreHorizontal,
   PencilIcon,
-  TimerResetIcon,
   CopyIcon,
-  Maximize2Icon,
+  Trash2Icon,
 } from "lucide-vue-next";
 import { PropType } from "vue";
+import { BandiUser } from "./userColumns";
 
 const props = defineProps({
-  player: {
-    type: Object as PropType<Player>,
+  user: {
+    type: Object as PropType<BandiUser>,
     required: true,
   },
 });
 
-function copy(id: string) {
-  navigator.clipboard.writeText(id);
+function copy(email: string) {
+  navigator.clipboard.writeText(email);
 }
 
 defineEmits<{
@@ -46,13 +46,9 @@ defineEmits<{
       <DropdownMenuLabel>Actions</DropdownMenuLabel>
       <DropdownMenuSeparator />
 
-      <DropdownMenuItem @click="copy(player.id)">
+      <DropdownMenuItem @click="copy(user.email!)">
         <CopyIcon class="size-4 mr-2" />
-        <span>Copy UUID</span>
-      </DropdownMenuItem>
-      <DropdownMenuItem @click="$emit('expand')">
-        <Maximize2Icon class="size-4 mr-2" />
-        <span>Expand</span>
+        <span>Copy email</span>
       </DropdownMenuItem>
       <DropdownMenuItem>
         <PencilIcon class="size-4 mr-2" />
@@ -62,8 +58,8 @@ defineEmits<{
       <DropdownMenuItem
         class="text-destructive hover:!bg-destructive hover:!text-destructive-foreground"
       >
-        <TimerResetIcon class="size-4 mr-2" />
-        <span>Reset</span>
+        <Trash2Icon class="size-4 mr-2" />
+        <span>Remove</span>
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>

@@ -42,7 +42,6 @@ import DataTableColumnToggle from "./data-table-column-toggle.vue";
 import DynaTableColumnToggle from "./DynaTableColumnToggle.vue";
 import DynaTablePagination from "./DynaTablePagination.vue";
 import DynaTableFacetedFilter from "./DynaTableFacetedFilter.vue";
-import { DataTableFacetedFilter } from "./DynaTableFacetedFilter.vue";
 
 const props = defineProps({
   columns: {

@@ -8,13 +8,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Player } from "@/lib/backendTypes";
 import { MoreHorizontal } from "lucide-vue-next";
 
-defineProps<{
-  payment: {
-    id: string;
-  };
-}>();
+const props = defineProps<Player>();
 
 function copy(id: string) {
   navigator.clipboard.writeText(id);
@@ -31,7 +28,7 @@ function copy(id: string) {
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-      <DropdownMenuItem @click="copy(payment.info.name)">
+      <DropdownMenuItem @click="copy(props.id)">
         Copy payment ID
       </DropdownMenuItem>
       <DropdownMenuSeparator />

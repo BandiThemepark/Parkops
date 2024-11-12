@@ -28,4 +28,17 @@ const createRegistration = async (role: string) => {
   return data.data;
 };
 
-export { getAllUsers, createRegistration };
+const verifyRegistration = async (registrationToken: string) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${BANDITHEMEPARK_API}registrations/verify/${registrationToken}`, {})
+      .then((data) => {
+        resolve(data.data);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+};
+
+export { getAllUsers, createRegistration, verifyRegistration };

@@ -51,7 +51,6 @@ const header = ref<TableColumn[]>([
 ]);
 
 const inputRef = ref<VNodeRef | null>(null);
-
 const registrationToken = ref("");
 const isDialogOpen = ref(false);
 const clickCreateRegistration = async (role: string) => {
@@ -85,6 +84,9 @@ const copyToClipboard = () => {
           Don't forget to send the registration token to the user. This token
           can't be viewed again.
         </DialogDescription>
+        <DialogDescription>
+          <b> This token is only valid for 30 minutes. </b>
+        </DialogDescription>
       </DialogHeader>
       <div class="flex items-center space-x-2">
         <div class="grid flex-1 gap-2">
@@ -95,20 +97,29 @@ const copyToClipboard = () => {
             readonly
           />
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button @click="copyToClipboard()" variant="outline">
-                <CopyIcon />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent> Copy to clipboard </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <Button @click="copyToClipboard()" variant="outline">
+                  <CopyIcon />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent> Copy to clipboard </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip :open="isCopied">
+              <TooltipTrigger as-child>
+                <div></div>
+              </TooltipTrigger>
+              <TooltipContent class="-translate-y-8">
+                Token copied
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
-      <p class="text-sm font-semibold opacity-60 -mt-4" v-if="isCopied">
-        Token coppied!
-      </p>
       <DialogFooter>
         <Button @click="isDialogOpen = false" variant="default">Close</Button>
       </DialogFooter>

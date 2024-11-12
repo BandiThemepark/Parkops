@@ -76,7 +76,7 @@ const secondsToNiceTime = (seconds: number) => {
       ]"
       v-slot="{ rowData }"
     >
-      <div>
+      <template name="expandable">
         <div class="">
           <Card>
             <CardHeader>
@@ -150,7 +150,7 @@ const secondsToNiceTime = (seconds: number) => {
             >
           </div>
         </div>
-      </div>
+      </template>
     </DynaTable>
   </DashboardProvider>
 </template>

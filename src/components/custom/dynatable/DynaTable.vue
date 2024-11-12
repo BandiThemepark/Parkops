@@ -58,6 +58,10 @@ const props = defineProps({
     type: Array as PropType<FacetedFilter[]>,
     default: () => [],
   },
+  hasExtendedRow: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 type FacetedFilter = {
@@ -128,6 +132,7 @@ const table = useVueTable({
         "
       />
     </div>
+    <div v-else></div>
     <div class="flex items-end space-x-2">
       <DynaTableFacetedFilter
         v-for="factedFilter in extraFacetedFilter"
@@ -172,7 +177,7 @@ const table = useVueTable({
             </TableRow>
 
             <!-- Collapsible Row -->
-            <TableRow data-state="selected">
+            <TableRow data-state="selected" v-if="props.hasExtendedRow">
               <TableCell
                 :class="{ 'p-0 h-0': !row.getIsExpanded() }"
                 class="transition-all"
@@ -184,7 +189,11 @@ const table = useVueTable({
                 >
                   <CollapsibleContent>
                     <!-- Render additional row details here -->
-                    <slot :rowData="row.original" />
+                    <slot
+                      v-if="hasExtendedRow"
+                      name="expandable"
+                      :rowData="row.original"
+                    />
                   </CollapsibleContent>
                 </Collapsible>
               </TableCell>

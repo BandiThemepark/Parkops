@@ -1,13 +1,10 @@
 <script lang="ts" setup>
 import DashboardProvider from "@/components/custom/DashboardProvider.vue";
-import { TableColumn } from "@/components/custom/dynamictable/dynamictable";
-import DynamicTable from "@/components/custom/dynamictable/DynamicTable.vue";
+import DynaTable from "@/components/custom/dynatable/DynaTable.vue";
+import { userColumns } from "@/components/custom/dynatable/scenarioSpecific/users/userColumns";
+
 import Button from "@/components/ui/button/Button.vue";
-import Card from "@/components/ui/card/Card.vue";
-import CardContent from "@/components/ui/card/CardContent.vue";
-import CardDescription from "@/components/ui/card/CardDescription.vue";
-import CardHeader from "@/components/ui/card/CardHeader.vue";
-import CardTitle from "@/components/ui/card/CardTitle.vue";
+
 import Dialog from "@/components/ui/dialog/Dialog.vue";
 import DialogContent from "@/components/ui/dialog/DialogContent.vue";
 import DialogDescription from "@/components/ui/dialog/DialogDescription.vue";
@@ -22,7 +19,6 @@ import DropdownMenuLabel from "@/components/ui/dropdown-menu/DropdownMenuLabel.v
 import DropdownMenuSeparator from "@/components/ui/dropdown-menu/DropdownMenuSeparator.vue";
 import DropdownMenuTrigger from "@/components/ui/dropdown-menu/DropdownMenuTrigger.vue";
 import Input from "@/components/ui/input/Input.vue";
-import Label from "@/components/ui/label/Label.vue";
 import Tooltip from "@/components/ui/tooltip/Tooltip.vue";
 import TooltipContent from "@/components/ui/tooltip/TooltipContent.vue";
 import TooltipProvider from "@/components/ui/tooltip/TooltipProvider.vue";
@@ -33,22 +29,6 @@ import { ref, VNodeRef } from "vue";
 
 const isLoading = ref(false);
 const userData = ref([]);
-const header = ref<TableColumn[]>([
-  {
-    name: "Email",
-    objectSelector: "email",
-    sortable: false,
-  },
-  { name: "Name", objectSelector: "displayName", sortable: false },
-  {
-    name: "Role",
-    objectSelector: "customClaims.role",
-    sortable: true,
-    format: (value: string) => {
-      return value.at(0)?.toUpperCase() + value.slice(1).toLowerCase();
-    },
-  },
-]);
 
 const inputRef = ref<VNodeRef | null>(null);
 const registrationToken = ref("");
@@ -178,21 +158,12 @@ const copyToClipboard = () => {
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
-    <Card>
-      <CardHeader>
-        <CardTitle> Users </CardTitle>
-        <CardDescription>
-          All the users who have access to ParkOps
-        </CardDescription>
-        <CardContent>
-          <DynamicTable
-            :is-loading="isLoading"
-            :max-lines="10"
-            :header="header"
-            :data="userData"
-          />
-        </CardContent>
-      </CardHeader>
-    </Card>
+    <DynaTable
+      :columns="userColumns"
+      :data="userData"
+      :searchBar="true"
+      search-for="username"
+    >
+    </DynaTable>
   </DashboardProvider>
 </template>

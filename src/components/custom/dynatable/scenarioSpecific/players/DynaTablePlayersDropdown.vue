@@ -9,7 +9,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Player } from "@/lib/backendTypes";
-import { MoreHorizontal } from "lucide-vue-next";
+import {
+  MoreHorizontal,
+  PencilIcon,
+  TimerResetIcon,
+  CopyIcon,
+  Maximize2Icon,
+} from "lucide-vue-next";
 import { PropType } from "vue";
 
 const props = defineProps({
@@ -38,13 +44,28 @@ defineEmits<{
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-      <DropdownMenuItem @click="copy(player.id)">
-        Copy payment ID
-      </DropdownMenuItem>
-      <DropdownMenuItem @click="$emit('expand')"> Expand </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem>View customer</DropdownMenuItem>
-      <DropdownMenuItem>View payment details</DropdownMenuItem>
+
+      <DropdownMenuItem @click="copy(player.id)">
+        <CopyIcon class="size-4 mr-2" />
+        <span>Copy UUID</span>
+      </DropdownMenuItem>
+      <DropdownMenuItem @click="$emit('expand')">
+        <Maximize2Icon class="size-4 mr-2" />
+        <span>Expand</span>
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem>
+        <PencilIcon class="size-4 mr-2" />
+        <span>Edit</span>
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem
+        class="text-destructive hover:!bg-destructive hover:!text-destructive-foreground"
+      >
+        <TimerResetIcon class="size-4 mr-2" />
+        <span>Reset</span>
+      </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

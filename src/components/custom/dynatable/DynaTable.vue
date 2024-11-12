@@ -25,21 +25,14 @@ import {
   getExpandedRowModel,
 } from "@tanstack/vue-table";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 
 import { valueUpdater } from "@/lib/utils";
 
-import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-vue-next";
-import DataTablePagination from "./data-table-pagination.vue";
-import DataTableColumnToggle from "./data-table-column-toggle.vue";
 import DynaTableColumnToggle from "./DynaTableColumnToggle.vue";
 import DynaTablePagination from "./DynaTablePagination.vue";
 import DynaTableFacetedFilter from "./DynaTableFacetedFilter.vue";
@@ -165,27 +158,40 @@ const table = useVueTable({
       </TableHeader>
       <TableBody>
         <template v-if="table.getRowModel().rows?.length">
-          <template v-if="table.getRowModel().rows?.length">
-            <template v-for="row in table.getRowModel().rows" :key="row.id">
-              <TableRow
-                :data-state="row.getIsSelected() ? 'selected' : undefined"
+          <template v-for="row in table.getRowModel().rows" :key="row.id">
+            <!-- Main Row -->
+            <TableRow
+              :data-state="row.getIsSelected() ? 'selected' : undefined"
+            >
+              <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                <FlexRender
+                  :render="cell.column.columnDef.cell"
+                  :props="cell.getContext()"
+                />
+              </TableCell>
+            </TableRow>
+
+            <!-- Collapsible Row -->
+            <TableRow data-state="selected">
+              <TableCell
+                :class="{ 'p-0 h-0': !row.getIsExpanded() }"
+                class="transition-all"
+                :colspan="row.getAllCells().length"
               >
-                <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-                  <FlexRender
-                    :render="cell.column.columnDef.cell"
-                    :props="cell.getContext()"
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow v-if="row.getIsExpanded()" data-state="selected">
-                <TableCell :colspan="row.getAllCells().length">
-                  <!-- {{ JSON.stringify(row.original) }} -->
-                  <slot :rowData="row.original" />
-                </TableCell>
-              </TableRow>
-            </template>
+                <Collapsible
+                  :open="row.getIsExpanded()"
+                  @update:open="row.toggleExpanded"
+                >
+                  <CollapsibleContent>
+                    <!-- Render additional row details here -->
+                    <slot :rowData="row.original" />
+                  </CollapsibleContent>
+                </Collapsible>
+              </TableCell>
+            </TableRow>
           </template>
         </template>
+
         <template v-else>
           <TableRow>
             <TableCell :colspan="columns.length" class="h-24 text-center">

@@ -4,6 +4,7 @@ import { h } from "vue";
 import DynaTableColumnHeader from "../../DynaTableColumnHeader.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
 import DynaTablePlayersDropdown from "./DynaTablePlayersDropdown.vue";
+import DynaTableExpandButton from "../../DynaTableExpandButton.vue";
 
 export const playerColums: ColumnDef<Player>[] = [
   {
@@ -63,11 +64,13 @@ export const playerColums: ColumnDef<Player>[] = [
     cell: ({ row }) => {
       const player = row.original;
 
-      return h(
-        "div",
-        { class: "relative text-right" },
-        h(DynaTablePlayersDropdown, { player, onExpand: row.toggleExpanded })
-      );
+      return h("div", { class: "relative text-right space-x-2" }, [
+        h(DynaTableExpandButton, {
+          onExpand: row.toggleExpanded,
+          isExpanded: row.getIsExpanded(),
+        }),
+        h(DynaTablePlayersDropdown, { player, onExpand: row.toggleExpanded }),
+      ]);
     },
   },
 ];

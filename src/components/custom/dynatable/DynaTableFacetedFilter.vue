@@ -25,39 +25,44 @@ import { CheckIcon, PlusCircleIcon } from "lucide-vue-next";
 
 import { computed } from "vue";
 
-export interface DataTableFacetedFilter {
-  column?: Column<any, any> | undefined;
+type DataTableFacetedFilter = {
+  column?: Column<any, any>;
   title?: string;
   options: {
     label: string;
     value: string;
     icon?: Component;
   }[];
-}
+};
 
-const props = defineProps({
-  column: {
-    type: Object as PropType<Column<any, any> | undefined>,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  options: {
-    type: Array as PropType<DataTableFacetedFilter["options"]>,
-    required: true,
-  },
-  hasUniqueOptions: {
-    type: Boolean,
-    default: false,
-  },
-});
+type DataTableFacatedProps = {
+  hasUniqueOptions: boolean;
+} & DataTableFacetedFilter;
+
+const props = defineProps<DataTableFacatedProps>();
 
 const facets = computed(() => props.column?.getFacetedUniqueValues());
 const selectedValues = computed(
   () => new Set(props.column?.getFilterValue() as string[])
 );
+const filterFunction = (
+  list: string[] | number[] | false[] | true[] | Record<string, any>[],
+  term: string
+) => {
+  if (Array.isArray(list)) {
+    if (typeof list[0] === "string") {
+      return list.filter((item) =>
+        (item as string).toLowerCase().includes(term)
+      ) as string[];
+    }
+    if (typeof list[0] === "number") {
+      return list.filter((item) =>
+        (item as number).toString().includes(term)
+      ) as number[];
+    }
+  }
+  return [] as string[];
+};
 </script>
 
 <template>
@@ -100,9 +105,7 @@ const selectedValues = computed(
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-[200px] p-0" align="start">
-      <Command
-        :filter-function="(list: DataTableFacetedFilter['options'], term) => list.filter(i => i.label.toLowerCase()?.includes(term)) "
-      >
+      <Command :filter-function="filterFunction">
         <CommandInput :placeholder="title" />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>

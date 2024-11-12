@@ -11,7 +11,20 @@ export const playerColums: ColumnDef<Player>[] = [
     accessorKey: "playername",
     header: ({ column }) =>
       h(DynaTableColumnHeader, { column: column, title: "Playername" }),
-    cell: ({ row, column }) => row.getValue(column.id),
+    cell: ({ row, column }) => {
+      const player = row.original;
+      return h("div", { class: " flex ites-center space-x-2" }, [
+        h(
+          "div",
+          { class: "overflow-hidden rounded w-fit" },
+          h("img", {
+            src: `https://crafatar.com/avatars/${player.uuid}?size=24&scale=1&default=MHF_Steve&overlay`,
+          })
+        ),
+
+        h("span", { class: "mr-2" }, player.playername),
+      ]);
+    },
   },
   {
     id: "role",

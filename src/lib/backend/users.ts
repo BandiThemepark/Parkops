@@ -41,4 +41,40 @@ const verifyRegistration = async (registrationToken: string) => {
   });
 };
 
-export { getAllUsers, createRegistration, verifyRegistration };
+const createUser = async (
+  registrationToken: string,
+  user: { name: string; email: string; password: string }
+) => {
+  const data = await axios.post(
+    `${BANDITHEMEPARK_API}registrations/use/${registrationToken}`,
+    {
+      user: user,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+      },
+    }
+  );
+  return data;
+};
+
+const deleteUser = async (uid: string) => {
+  const data = await axios.delete(
+    `${BANDITHEMEPARK_API}registrations/user/${uid}`,
+    {
+      headers: {
+        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+      },
+    }
+  );
+  return data;
+};
+
+export {
+  deleteUser,
+  getAllUsers,
+  createRegistration,
+  verifyRegistration,
+  createUser,
+};

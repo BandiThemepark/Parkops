@@ -7,6 +7,15 @@ const routes: RouteRecordRaw[] = [
     name: "login",
     component: () => import("@/views/Login.vue"),
     meta: {
+      requiresAuth: false,
+      inNavigation: false,
+    },
+  },
+  {
+    path: "/register",
+    name: "register",
+    component: () => import("@/views/Register.vue"),
+    meta: {
       inNavigation: false,
     },
   },
@@ -166,6 +175,8 @@ router.beforeEach(async (to, _from, next) => {
     } else {
       next();
     }
+  } else {
+    next();
   }
 });
 export { routes, getRoutesForRole };

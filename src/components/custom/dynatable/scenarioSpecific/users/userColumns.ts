@@ -56,7 +56,8 @@ export const userColumns: ColumnDef<BandiUser>[] = [
         ? user.customClaims["role"]
         : "No role";
       const capitalizedRole =
-        role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+        role?.charAt(0).toUpperCase() + role?.slice(1).toLowerCase() ||
+        "unknown";
 
       return h("div", { class: " flex ites-center space-x-2" }, [
         h(Badge, { class: "mr-2" }, () => capitalizedRole),

@@ -68,7 +68,10 @@ const checkRegistration = async () => {
     .then((result) => {
       console.log(result);
       if ((result as any).message == "success") {
-        // router.push({ path: "/home" });
+        router.push({
+          path: "/register",
+          query: { token: registrationValues.value.token },
+        });
         toaster.toast({
           title: "Token verified",
           description: "You can now register",

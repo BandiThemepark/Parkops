@@ -79,6 +79,17 @@ const routes: RouteRecordRaw[] = [
       navigationName: "Cosmetics",
     },
   },
+  {
+    path: "/cosmetics/create",
+    name: "createcosmetics",
+    component: () => import("@/views/CreateCosmetic.vue"),
+    meta: {
+      requiresAuth: true,
+      roles: [Roles.OWNER, Roles.CREW],
+      minViewLevel: [Roles.CREW],
+      inNavigation: false,
+    },
+  },
   //   {
   //     path: "/settings",
   //     name: "settings",

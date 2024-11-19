@@ -14,11 +14,21 @@ export const cosmeticColumns: ColumnDef<Cosmetic>[] = [
       h(DynaTableColumnHeader, { column: column, title: "Name" }),
     cell: ({ row, column }) => {
       const cosmetic = row.original;
-      return h(
-        "span",
-        { class: "mr-2" },
-        cosmetic.displayName ? cosmetic.displayName : "No name"
-      );
+      return h("div", { class: "flex items-center space-x-3" }, [
+        h(
+          "img",
+          {
+            class: "size-5",
+            src: `https://api.dicebear.com/9.x/identicon/svg?seed=${cosmetic.id}`,
+          },
+          cosmetic.displayName ? cosmetic.displayName : "No name"
+        ),
+        h(
+          "span",
+          { class: "mr-2" },
+          cosmetic.displayName ? cosmetic.displayName : "No name"
+        ),
+      ]);
     },
   },
   {

@@ -21,4 +21,31 @@ const createCosmetic = async (cosmetic: any) => {
   return data;
 };
 
-export { getAllCosmetics, createCosmetic };
+const getCosmeticStatistics = async (id: string) => {
+  const data = await axios.get(
+    `${BANDITHEMEPARK_API}cosmetics/getCosmeticStatistics/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+      },
+    }
+  );
+  return data;
+};
+
+const deleteCosmetic = async (id: string) => {
+  const data = await axios.delete(`${BANDITHEMEPARK_API}cosmetics/${id}`, {
+    headers: {
+      Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+    },
+  });
+
+  return data;
+};
+
+export {
+  getAllCosmetics,
+  deleteCosmetic,
+  createCosmetic,
+  getCosmeticStatistics,
+};

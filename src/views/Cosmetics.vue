@@ -104,6 +104,7 @@ const loadCosmetics = async () => {
   isLoading.value = true;
   const data = await Promise.all([getAllCosmetics()]);
   cosmeticsData.value = data[0].data.data;
+  console.log(data[0].data);
   isLoading.value = false;
 };
 

@@ -61,7 +61,7 @@ const types = ref([
     name: "handheld",
     displayName: "Handheld",
     tabName: "Handhelds",
-    defaultMetadata: `{"customModelData":0}`,
+    defaultMetadata: `{"customModelData":0, "material":"DIAMOND_SWORD"}`,
   },
   {
     name: "balloon",
@@ -97,22 +97,31 @@ const types = ref([
     name: "chestplate",
     displayName: "Chestplate",
     tabName: "Chestplates",
-    defaultMetadata: `{}`,
-    disabled: true,
+    defaultMetadata: `{
+      "customModelData":0,
+      "material":"DIAMOND_CHESTPLATE",
+      "color":"#FFFFFF"
+    }`,
   },
   {
     name: "leggings",
     displayName: "Leggings",
     tabName: "Leggings",
-    defaultMetadata: `{}`,
-    disabled: true,
+    defaultMetadata: `{
+      "customModelData":0,
+      "material":"DIAMOND_LEGGINGS",
+      "color":"#FFFFFF"
+    }`,
   },
   {
     name: "boots",
     displayName: "Boots",
     tabName: "Boots",
-    defaultMetadata: `{}`,
-    disabled: true,
+    defaultMetadata: `{
+      "customModelData":0,
+      "material":"DIAMOND_BOOTS",
+      "color":"#FFFFFF"
+    }`,
   },
 ]);
 const step = ref(1);
@@ -157,6 +166,7 @@ type HatMetaData = {
 };
 
 type HandheldMetaData = {
+  material: string;
   customModelData: number;
 };
 
@@ -182,11 +192,25 @@ type BackpackMetaData = {
   customModelData: number;
 };
 
-type ChestplateMetaData = {};
+type ChestplateMetaData = {
+  customModelData: number;
+  material: string;
+  color: string;
+};
 
-type LeggingsMetaData = {};
+type LeggingsMetaData = {
+  customModelData: number;
+  material: string;
+  color: string;
+};
 
-type BootsMetaData = {};
+type BootsMetaData = {
+  customModelData: number;
+  material: string;
+  color: string;
+};
+
+const isEditingRawTitleColor = ref(false);
 
 const stepTwoValues = ref({
   type: "",
@@ -241,6 +265,7 @@ const stepTwoRules = {
 const selectedColor = ref("#FFFFFF");
 const titleText = ref("");
 const coloredTitle = computed(() => {
+  if (isEditingRawTitleColor.value) return titleText.value;
   return `<${selectedColor.value}>${titleText.value}`;
 });
 const v$stepOne = useVuelidate(stepOneRules, stepOneValues);
@@ -561,6 +586,14 @@ const finalizeTrail = () => {
         </section>
         <section v-if="stepTwoValues.type == 'handheld'">
           <div>
+            <Label for="material">Material</Label>
+            <Input
+              id="material"
+              v-model="(stepTwoValues.metaData as HandheldMetaData).material"
+              placeholder="DIAMOND_SWORD"
+            ></Input>
+          </div>
+          <div>
             <Label for="customModelData">Custom model data</Label>
             <NumberField
               v-model="(stepTwoValues.metaData as HandheldMetaData).customModelData"
@@ -662,7 +695,11 @@ const finalizeTrail = () => {
                   </div>
                   <div class="mb-2">
                     <Label for="length">Length</Label>
-                    <NumberField v-model="toAddTrail.length" id="length">
+                    <NumberField
+                      :step="0.001"
+                      v-model="toAddTrail.length"
+                      id="length"
+                    >
                       <NumberFieldContent>
                         <NumberFieldDecrement />
                         <NumberFieldInput />
@@ -685,7 +722,11 @@ const finalizeTrail = () => {
         </section>
         <section v-if="stepTwoValues.type == 'title'">
           <!-- color picker -->
-          <div>
+          <div class="flex items-center gap-2 mb-2">
+            <Switch v-model:checked="isEditingRawTitleColor" />
+            <Label for="color">Edit raw color</Label>
+          </div>
+          <div v-if="!isEditingRawTitleColor">
             <Label for="color">Color</Label>
             <Input v-model="selectedColor" id="color" type="color"></Input>
           </div>
@@ -700,9 +741,99 @@ const finalizeTrail = () => {
         </section>
         <section v-if="stepTwoValues.type == 'kart'">kart</section>
         <section v-if="stepTwoValues.type == 'backpack'">backpack</section>
-        <section v-if="stepTwoValues.type == 'chestplate'">chestplate</section>
-        <section v-if="stepTwoValues.type == 'leggings'">leggings</section>
-        <section v-if="stepTwoValues.type == 'boots'">boots</section>
+        <section v-if="stepTwoValues.type == 'chestplate'">
+          <div>
+            <Label for="material">Material</Label>
+            <Input
+              id="material"
+              v-model="(stepTwoValues.metaData as ChestplateMetaData).material"
+              placeholder="DIAMOND_CHESTPLATE"
+            ></Input>
+          </div>
+          <div>
+            <Label for="customModelData">Custom model data</Label>
+            <NumberField
+              v-model="(stepTwoValues.metaData as ChestplateMetaData).customModelData"
+              id="customModelData"
+            >
+              <NumberFieldContent>
+                <NumberFieldDecrement />
+                <NumberFieldInput />
+                <NumberFieldIncrement />
+              </NumberFieldContent>
+            </NumberField>
+          </div>
+          <div>
+            <Label for="color">Color</Label>
+            <Input
+              id="color"
+              v-model="(stepTwoValues.metaData as ChestplateMetaData).color"
+              type="color"
+            ></Input>
+          </div>
+        </section>
+        <section v-if="stepTwoValues.type == 'leggings'">
+          <div>
+            <Label for="material">Material</Label>
+            <Input
+              id="material"
+              v-model="(stepTwoValues.metaData as LeggingsMetaData).material"
+              placeholder="DIAMOND_LEGGINGS"
+            ></Input>
+          </div>
+          <div>
+            <Label for="customModelData">Custom model data</Label>
+            <NumberField
+              v-model="(stepTwoValues.metaData as LeggingsMetaData).customModelData"
+              id="customModelData"
+            >
+              <NumberFieldContent>
+                <NumberFieldDecrement />
+                <NumberFieldInput />
+                <NumberFieldIncrement />
+              </NumberFieldContent>
+            </NumberField>
+          </div>
+          <div>
+            <Label for="color">Color</Label>
+            <Input
+              id="color"
+              v-model="(stepTwoValues.metaData as LeggingsMetaData).color"
+              type="color"
+            ></Input>
+          </div>
+        </section>
+        <section v-if="stepTwoValues.type == 'boots'">
+          <div>
+            <Label for="material">Material</Label>
+            <Input
+              id="material"
+              v-model="(stepTwoValues.metaData as BootsMetaData).material"
+              placeholder="DIAMOND_BOOTS"
+            ></Input>
+          </div>
+          <div>
+            <Label for="customModelData">Custom model data</Label>
+            <NumberField
+              v-model="(stepTwoValues.metaData as BootsMetaData).customModelData"
+              id="customModelData"
+            >
+              <NumberFieldContent>
+                <NumberFieldDecrement />
+                <NumberFieldInput />
+                <NumberFieldIncrement />
+              </NumberFieldContent>
+            </NumberField>
+          </div>
+          <div>
+            <Label for="color">Color</Label>
+            <Input
+              id="color"
+              v-model="(stepTwoValues.metaData as BootsMetaData).color"
+              type="color"
+            ></Input>
+          </div>
+        </section>
       </div>
       <div class="flex items-center justify-between">
         <Button @click="previousStep" variant="outline">

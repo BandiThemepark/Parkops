@@ -194,6 +194,8 @@ loadCosmetics();
           </div>
         </Badge>
       </div>
+      {{ console.log(rowData) }}
+
       <div v-if="(rowData.itemTags || []).length > 0">
         <h1 class="font-medium mb-2">Tags</h1>
         <div v-for="tag in rowData.itemTags || []" :key="tag">
@@ -205,8 +207,8 @@ loadCosmetics();
         <div v-for="(req, index) in rowData.requirements || []" :key="index">
           <Badge variant="outline"
             >{{ req.type }}
-            <span v-if="req.settings">({{ req.settings || "" }})</span></Badge
-          >
+            <span v-if="req.settings">({{ req.settings || "" }})</span>
+          </Badge>
         </div>
       </div>
     </DynaTable>

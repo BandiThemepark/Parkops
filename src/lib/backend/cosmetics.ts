@@ -12,18 +12,12 @@ const getAllCosmetics = async () => {
 };
 
 const createCosmetic = async (cosmetic: any) => {
-  const data = await axios
-    .post(`${BANDITHEMEPARK_API}cosmetics`, cosmetic, {
-      headers: {
-        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
-      },
-    })
-    .then((response) => {
-      return response;
-    })
-    .catch((error) => {
-      return error;
-    });
+  const data = await axios.post(`${BANDITHEMEPARK_API}cosmetics`, cosmetic, {
+    headers: {
+      Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+    },
+  });
+
   return data;
 };
 

@@ -1,18 +1,30 @@
 import axios from "axios";
 import useAuthentication from "../../middleware/authentication";
+import BANDITHEMEPARK_API from "../network";
 
-const getAllCosmetics = async (query: string, type: string | undefined) => {
-  const data = await axios.get(
-    "https://api.bandithemepark.net/cosmetics?limit=1000&q=" +
-      query +
-      (type ? "&type=" + type : ""),
-    {
+const getAllCosmetics = async () => {
+  const data = await axios.get(`${BANDITHEMEPARK_API}cosmetics`, {
+    headers: {
+      Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+    },
+  });
+  return data;
+};
+
+const createCosmetic = async (cosmetic: any) => {
+  const data = await axios
+    .post(`${BANDITHEMEPARK_API}cosmetics`, cosmetic, {
       headers: {
         Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
       },
-    }
-  );
-  return data.data;
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      return error;
+    });
+  return data;
 };
 
-export { getAllCosmetics };
+export { getAllCosmetics, createCosmetic };

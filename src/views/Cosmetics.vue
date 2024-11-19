@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DashboardProvider from "@/components/custom/DashboardProvider.vue";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { ref, watch } from "vue";
+import { h, ref, watch } from "vue";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getAllCosmetics } from "@/lib/backend/cosmetics.ts";
@@ -32,17 +32,69 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Cosmetic } from "@/lib/backendTypes";
-
+import DynaTable from "@/components/custom/dynatable/DynaTable.vue";
+import { cosmeticColumns } from "@/components/custom/dynatable/scenarioSpecific/cosmetics/cosmeticColumns";
+import {
+  BackpackIcon,
+  CarIcon,
+  FootprintsIcon,
+  GraduationCapIcon,
+  LassoIcon,
+  MessageSquareQuoteIcon,
+  ShirtIcon,
+  SwordIcon,
+  WindIcon,
+  Icon,
+  CoinsIcon,
+  DrumstickIcon,
+  PlusIcon,
+} from "lucide-vue-next";
+import { trousers } from "@lucide/lab";
 const types = ref([
-  { name: "hat", displayName: "Hat", tabName: "Hats" },
-  { name: "handheld", displayName: "Handheld", tabName: "Handhelds" },
-  { name: "balloon", displayName: "Balloon", tabName: "Balloons" },
-  { name: "title", displayName: "Title", tabName: "Titles" },
-  { name: "kart", displayName: "Kart", tabName: "Karts" },
-  { name: "backpack", displayName: "Backpack", tabName: "Backpacks" },
-  { name: "chestplate", displayName: "Chestplate", tabName: "Chestplates" },
-  { name: "leggings", displayName: "Leggings", tabName: "Leggings" },
-  { name: "boots", displayName: "Boots", tabName: "Boots" },
+  { name: "hat", displayName: "Hat", tabName: "Hats", icon: GraduationCapIcon },
+  {
+    name: "handheld",
+    displayName: "Handheld",
+    tabName: "Handhelds",
+    icon: SwordIcon,
+  },
+  {
+    name: "balloon",
+    displayName: "Balloon",
+    tabName: "Balloons",
+    icon: WindIcon,
+  },
+  {
+    name: "title",
+    displayName: "Title",
+    tabName: "Titles",
+    icon: MessageSquareQuoteIcon,
+  },
+  { name: "kart", displayName: "Kart", tabName: "Karts", icon: CarIcon },
+  {
+    name: "backpack",
+    displayName: "Backpack",
+    tabName: "Backpacks",
+    icon: BackpackIcon,
+  },
+  {
+    name: "chestplate",
+    displayName: "Chestplate",
+    tabName: "Chestplates",
+    icon: ShirtIcon,
+  },
+  {
+    name: "leggings",
+    displayName: "Leggings",
+    tabName: "Leggings",
+    icon: h(Icon, { iconNode: trousers, name: "trousers" }),
+  },
+  {
+    name: "boots",
+    displayName: "Boots",
+    tabName: "Boots",
+    icon: FootprintsIcon,
+  },
 ]);
 
 const cosmeticsData = ref<Cosmetic[]>([]);
@@ -50,13 +102,8 @@ const isLoading = ref(false);
 
 const loadCosmetics = async () => {
   isLoading.value = true;
-  const data = await Promise.all([
-    getAllCosmetics(
-      searchText.value,
-      selectedType.value === "all" ? undefined : selectedType.value
-    ),
-  ]);
-  cosmeticsData.value = data[0].data.cosmetics;
+  const data = await Promise.all([getAllCosmetics()]);
+  cosmeticsData.value = data[0].data.data;
   isLoading.value = false;
 };
 
@@ -86,9 +133,9 @@ loadCosmetics();
 
 <template>
   <DashboardProvider>
-    <h1 class="font-bold text-3xl">Cosmetics</h1>
+    <!-- <h1 classx="font-bold text-3xl">Cosmetics</h1> -->
 
-    <ToggleGroup
+    <!-- <ToggleGroup
       v-model="selectedType"
       type="single"
       class="justify-start mt-4"
@@ -99,8 +146,71 @@ loadCosmetics();
       <ToggleGroupItem v-for="type in types" :value="type.name">
         <h2>{{ type.tabName }}</h2>
       </ToggleGroupItem>
-    </ToggleGroup>
+    </ToggleGroup> -->
+    <div class="flex items-center justify-between">
+      <h1 class="font-bold text-3xl">Cosmetics</h1>
+      <Button @click="$router.push({ path: '/cosmetics/create' })">
+        <PlusIcon class="size-4" />
+        <span>Create</span>
+      </Button>
+      <!-- <CreateCosmeticSheet /> -->
+    </div>
 
+    <DynaTable
+      :columns="cosmeticColumns"
+      :data="cosmeticsData"
+      :has-extended-row="true"
+      :search-bar="true"
+      search-for="name"
+      :extra-faceted-filter="[
+        {
+          title: 'Type',
+          hasUniqueOptions: false,
+          options: types.map((type) => ({
+            label: type.tabName,
+            value: type.name,
+            icon: type.icon,
+          })),
+          columnId: 'type',
+        },
+      ]"
+      v-slot="{ rowData }"
+    >
+      <div class="mb-2">
+        <h1 class="font-medium">Description</h1>
+        <p>{{ rowData.description.replaceAll("&&", "\n") }}</p>
+      </div>
+      <div class="mb-2 flex gap-2">
+        <Badge variant="outline">
+          <div class="flex items-center space-x-3">
+            <CoinsIcon class="size-4" />
+            <span>{{ rowData.price }} coins</span>
+          </div>
+        </Badge>
+        <Badge variant="outline" v-if="rowData.consumable">
+          <div class="flex items-center space-x-3">
+            <DrumstickIcon class="size-4" />
+            <span>Consumable</span>
+          </div>
+        </Badge>
+      </div>
+      <div v-if="(rowData.itemTags || []).length > 0">
+        <h1 class="font-medium mb-2">Tags</h1>
+        <div v-for="tag in rowData.itemTags || []" :key="tag">
+          <Badge variant="outline">{{ tag }}</Badge>
+        </div>
+      </div>
+      <div v-if="(rowData.requirements || []).length > 0">
+        <h1 class="font-medium mb-2">Requirements</h1>
+        <div v-for="(req, index) in rowData.requirements || []" :key="index">
+          <Badge variant="outline"
+            >{{ req.type }}
+            <span v-if="req.settings">({{ req.settings || "" }})</span></Badge
+          >
+        </div>
+      </div>
+    </DynaTable>
+    <!-- 
     <div class="flex relative w-full max-w-md items-center gap-1.5 mt-2">
       <Input
         v-model="searchText"
@@ -127,7 +237,6 @@ loadCosmetics();
           />
         </svg>
       </span>
-      <CreateCosmeticSheet />
     </div>
 
     <div class="grid grid-cols-4 w-full mt-4 gap-2">
@@ -289,6 +398,6 @@ loadCosmetics();
         </CardHeader>
         <CardContent> </CardContent>
       </Card>
-    </div>
+    </div> -->
   </DashboardProvider>
 </template>

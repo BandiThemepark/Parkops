@@ -104,9 +104,9 @@ export type Cosmetic = {
   shops?: Shop[];
 };
 
-type CosmeticRequirement = {
+export type CosmeticRequirement = {
   type: string;
-  settings: string;
+  settings?: string;
 };
 
 export type PlayerCosmetic = {

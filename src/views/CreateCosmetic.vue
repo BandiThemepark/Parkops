@@ -31,6 +31,7 @@ import TagsInputItemText from "@/components/ui/tags-input/TagsInputItemText.vue"
 import { useToast } from "@/components/ui/toast";
 import { createCosmetic } from "@/lib/backend/cosmetics";
 import { mayNotHaveSpaces } from "@/lib/validation/validations";
+import { CosmeticRequirement } from "@/lib/backendTypes";
 import useVuelidate from "@vuelidate/core";
 import {
   alpha,
@@ -146,6 +147,7 @@ const stepOneValues = ref({
   price: 0,
   consumable: false,
   itemTags: [],
+  requirements: [],
 });
 
 type HatMetaData = {
@@ -302,6 +304,26 @@ watch(
   }
 );
 
+const isAddingRequirement = ref(false);
+
+const toAddRequirement = ref({
+  type: "",
+  settings: "",
+});
+
+const addRequirement = () => {
+  const requirement: CosmeticRequirement = {
+    type: toAddRequirement.value.type,
+    settings: toAddRequirement.value.settings,
+  };
+  (stepOneValues.value as any).requirements.push(requirement);
+  isAddingRequirement.value = false;
+};
+
+const removeRequirement = (index: number) => {
+  (stepOneValues.value as any).requirements.splice(index, 1);
+};
+
 const finalizeTrail = () => {
   const trail = {
     material: toAddTrail.value.material,
@@ -390,7 +412,7 @@ const finalizeTrail = () => {
           <Switch v-model:checked="stepOneValues.consumable" id="consumable" />
           <Label for="airplane-mode">Is consumable</Label>
         </div>
-        <div>
+        <div class="mb-4">
           <Label for="itemTags">Tags</Label>
           <TagsInput id="itemTags" v-model="stepOneValues.itemTags">
             <TagsInputItem v-for="item in stepOneValues.itemTags" :value="item">
@@ -402,6 +424,61 @@ const finalizeTrail = () => {
         </div>
         <div>
           <!-- requirements -->
+          <h1 class="font-medium mb-4 text-lg">Requirements</h1>
+          <div>
+            <div
+              class="flex justify-between items-center mb-2"
+              v-for="(requirement, index) in stepOneValues.requirements"
+            >
+              <Card class="p-4 w-full">
+                <div class="flex justify-between items-center">
+                  <div class="flex gap-4">
+                    <span class="font-medium">{{ index + 1 }}.</span>
+                    <span class="">{{
+                      (requirement as CosmeticRequirement).type
+                    }}</span>
+                    <pre>{{
+                      (requirement as CosmeticRequirement).settings
+                    }}</pre>
+                  </div>
+                  <Button variant="ghost" @click="removeRequirement(index)">
+                    <TrashIcon class="size-4" />
+                  </Button>
+                </div>
+              </Card>
+            </div>
+            <Button
+              v-if="!isAddingRequirement"
+              @click="isAddingRequirement = true"
+            >
+              <PlusIcon class="size-4" />
+              <span>Add requirement</span>
+            </Button>
+            <div v-if="isAddingRequirement">
+              <div class="flex w-full justify-between gap-2 items-end mb-2">
+                <div class="w-full">
+                  <Label for="requirement">Type</Label>
+                  <Input
+                    v-model="toAddRequirement.type"
+                    id="requirement"
+                    placeholder="Type"
+                  ></Input>
+                </div>
+                <div class="w-full">
+                  <Label for="Settings">Settings</Label>
+                  <Input
+                    v-model="toAddRequirement.settings"
+                    id="Settings"
+                    placeholder="Settings"
+                  ></Input>
+                </div>
+              </div>
+              <Button @click="addRequirement">
+                <CheckIcon class="size-4" />
+                <span>Finalize requirement</span>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 

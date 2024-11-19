@@ -45,24 +45,28 @@ const facets = computed(() => props.column?.getFacetedUniqueValues());
 const selectedValues = computed(
   () => new Set(props.column?.getFilterValue() as string[])
 );
-const filterFunction = (
-  list: string[] | number[] | false[] | true[] | Record<string, any>[],
-  term: string
-) => {
-  if (Array.isArray(list)) {
-    if (typeof list[0] === "string") {
-      return list.filter((item) =>
-        (item as string).toLowerCase().includes(term)
-      ) as string[];
+const filterFunction = computed(
+  () =>
+    (
+      list: string[] | number[] | false[] | true[] | Record<string, any>[],
+      term: string
+    ) => {
+      // Make the checkboxes work as AND filters
+      if (Array.isArray(list)) {
+        if (typeof list[0] === "string") {
+          return list.filter((item) =>
+            (item as string).toLowerCase().includes(term)
+          ) as string[];
+        }
+        if (typeof list[0] === "number") {
+          return list.filter((item) =>
+            (item as number).toString().includes(term)
+          ) as number[];
+        }
+      }
+      return [] as string[];
     }
-    if (typeof list[0] === "number") {
-      return list.filter((item) =>
-        (item as number).toString().includes(term)
-      ) as number[];
-    }
-  }
-  return [] as string[];
-};
+);
 </script>
 
 <template>
@@ -116,8 +120,6 @@ const filterFunction = (
               :value="option"
               @select="
                 (e) => {
-                  console.log(e.detail.value);
-
                   const isSelected = selectedValues.has(option.value);
                   if (isSelected) {
                     selectedValues.delete(option.value);
@@ -129,6 +131,7 @@ const filterFunction = (
                   }
                   const filterValues = Array.from(selectedValues);
                   // clear filter on change
+                  console.log('filterValues', filterValues);
 
                   column?.setFilterValue(
                     filterValues.length ? filterValues : undefined

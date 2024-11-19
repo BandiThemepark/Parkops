@@ -177,9 +177,13 @@ const table = useVueTable({
             </TableRow>
 
             <!-- Collapsible Row -->
-            <TableRow data-state="selected" v-if="props.hasExtendedRow">
+            <TableRow
+              data-state="selected"
+              v-if="props.hasExtendedRow"
+              :class="{ 'p-0 !h-0 border-none': !row.getIsExpanded() }"
+            >
               <TableCell
-                :class="{ 'p-0 h-0': !row.getIsExpanded() }"
+                :class="{ 'p-0 !h-0 border-none': !row.getIsExpanded() }"
                 class="transition-all"
                 :colspan="row.getAllCells().length"
               >
@@ -189,11 +193,7 @@ const table = useVueTable({
                 >
                   <CollapsibleContent>
                     <!-- Render additional row details here -->
-                    <slot
-                      v-if="hasExtendedRow"
-                      name="expandable"
-                      :rowData="row.original"
-                    />
+                    <slot v-if="hasExtendedRow" :rowData="row.original" />
                   </CollapsibleContent>
                 </Collapsible>
               </TableCell>

@@ -1,4 +1,4 @@
-import { integer, minValue, required } from "@vuelidate/validators";
+import { helpers, integer, minValue, required } from "@vuelidate/validators";
 
 export const createCateogryValidation = {
   displayName: {
@@ -48,4 +48,22 @@ export const createAchievementValidation = {
   rewardType: {
     required,
   },
+};
+
+export const mayNotHaveSpaces = (value: string) => {
+  return spaceCheck(value);
+};
+
+const spaceCheck = (value: string) => {
+  return !value.includes(" ");
+};
+
+// Can only be of the following format
+// LEATHER_HORSE_ARMOR
+export const mustBeMaterial = (value: string) => {
+  return materialCheck(value);
+};
+
+const materialCheck = (value: string) => {
+  return value.match(/^[A-Z_]+$/);
 };

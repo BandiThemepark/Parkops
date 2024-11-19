@@ -92,16 +92,21 @@ export type Cosmetic = {
 
   price: number;
 
-  requirements: string;
+  requirements: CosmeticRequirement[];
 
   metaData: string;
 
   // string array with all tags
-  itemTags?: string;
+  itemTags?: string[];
 
   players?: PlayerCosmetic[];
 
   shops?: Shop[];
+};
+
+type CosmeticRequirement = {
+  type: string;
+  settings: string;
 };
 
 export type PlayerCosmetic = {

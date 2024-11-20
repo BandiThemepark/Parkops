@@ -51,7 +51,7 @@ const removeUser = async (uid: string) => {
       title: "User removed",
       description: "User has been removed successfully",
     });
-    theRouter.go(0);
+    // theRouter.go(0);
   } else {
     toast({
       title: "Error",

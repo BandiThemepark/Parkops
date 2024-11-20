@@ -130,6 +130,10 @@ const getNameFromType = (type: string) => {
 const openDialogType = ref("");
 
 loadCosmetics();
+
+const refresh = () => {
+  loadCosmetics();
+};
 </script>
 
 <template>
@@ -158,7 +162,7 @@ loadCosmetics();
     </div>
 
     <DynaTable
-      :columns="cosmeticColumns"
+      :columns="cosmeticColumns({ updateData: refresh })"
       :data="cosmeticsData"
       :has-extended-row="true"
       :search-bar="true"

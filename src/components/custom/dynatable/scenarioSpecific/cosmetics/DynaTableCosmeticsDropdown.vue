@@ -45,8 +45,9 @@ const currentUser = useAuthentication.getUser();
 
 const isRemoveDialogOpen = ref(false);
 
-defineEmits<{
+const emit = defineEmits<{
   (e: "expand"): void;
+  (e: "refreshCosmetics"): void;
 }>();
 
 const { toast } = useToast();
@@ -69,6 +70,7 @@ const removeCosmetic = async () => {
         title: "Cosmetic removed",
         description: "Cosmetic has been removed successfully",
       });
+      emit("refreshCosmetics");
       isRemoveDialogOpen.value = false;
       return;
     }
@@ -94,6 +96,7 @@ enum Dialogs {
   infoDialog = "infoDialog",
 }
 const activeDialog = ref<Dialogs | null>(null);
+// const emit = defineEmits(["refreshCosmetics"]);
 </script>
 
 <template>

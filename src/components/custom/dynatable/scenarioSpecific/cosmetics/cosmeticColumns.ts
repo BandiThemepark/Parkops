@@ -6,7 +6,9 @@ import DynaTableCosmeticsDropdown from "./DynaTableCosmeticsDropdown.vue";
 import DynaTableExpandButton from "../../DynaTableExpandButton.vue";
 import { Badge } from "@/components/ui/badge";
 
-export const cosmeticColumns: ColumnDef<Cosmetic>[] = [
+export const cosmeticColumns = (props: {
+  updateData: () => any;
+}): ColumnDef<Cosmetic>[] => [
   {
     id: "name",
     accessorKey: "displayName",
@@ -83,6 +85,7 @@ export const cosmeticColumns: ColumnDef<Cosmetic>[] = [
         h(DynaTableCosmeticsDropdown, {
           cosmetic,
           onExpand: row.toggleExpanded,
+          onRefreshCosmetics: props.updateData,
         }),
       ]);
     },

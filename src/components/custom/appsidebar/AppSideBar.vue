@@ -26,8 +26,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuGroup,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/toast";
+import DarkmodeToggle from "../darkmode/DarkmodeToggle.vue";
+import DropdownMenuSub from "@/components/ui/dropdown-menu/DropdownMenuSub.vue";
+import DropdownMenuSubTrigger from "@/components/ui/dropdown-menu/DropdownMenuSubTrigger.vue";
+import { MoonIcon, SunIcon } from "lucide-vue-next";
+import DropdownMenuSubContent from "@/components/ui/dropdown-menu/DropdownMenuSubContent.vue";
+import { useColorMode } from "@vueuse/core";
 
 const currentUser = ref<null | User>(null);
 const isLoading = ref(false);
@@ -49,6 +56,8 @@ const logout = () => {
     router.push({ name: "login" });
   }, 1000);
 };
+
+const themeMode = useColorMode();
 </script>
 
 <template>
@@ -182,6 +191,30 @@ const logout = () => {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger class="flex items-center space-x-2">
+                    <MoonIcon class="size-4" />
+                    <span>Theme</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem
+                        @click="themeMode = 'dark'"
+                        class="flex items-center space-x-2"
+                      >
+                        <MoonIcon class="size-4" />
+                        <span>Dark</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        @click="themeMode = 'light'"
+                        class="flex items-center space-x-2"
+                      >
+                        <SunIcon class="size-4" />
+                        <span>Light</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
                 <DropdownMenuItem class="flex items-center space-x-2">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

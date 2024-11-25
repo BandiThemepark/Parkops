@@ -12,6 +12,7 @@ import AppSideBar from "./appsidebar/AppSideBar.vue";
 import Separator from "../ui/separator/Separator.vue";
 import SidebarInset from "../ui/sidebar/SidebarInset.vue";
 import { useToast } from "../ui/toast";
+import DarkmodeToggle from "./darkmode/DarkmodeToggle.vue";
 
 const { toast } = useToast();
 const userRole = ref<Roles>(Roles.NONE);
@@ -47,6 +48,10 @@ const logout = () => {
         <header class="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger class="-ml-1" />
           <Separator orientation="vertical" class="mr-2 h-4" />
+          <div class="flex w-full items-center justify-between">
+            <div></div>
+            <DarkmodeToggle />
+          </div>
           <!-- <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem class="hidden md:block">

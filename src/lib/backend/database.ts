@@ -48,4 +48,36 @@ const restoreBackup = async (backupDate: string) => {
   return data;
 };
 
-export { getDatabaseStats, getAvailableBackups, createBackup, restoreBackup };
+const downloadBackup = async (backupDate: string) => {
+  const data = await axios.get(
+    `${BANDITHEMEPARK_API}database/download/${backupDate}`,
+    {
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+      },
+    }
+  );
+  const urlBlob = window.URL.createObjectURL(new Blob([data.data]));
+
+  const link = document.createElement("a");
+  link.href = urlBlob;
+  link.setAttribute(
+    "download",
+    `bandithemepark_database_backup_${backupDate}.zip`
+  ); // Set the file name
+  document.body.appendChild(link);
+
+  // Trigger download and remove the link
+  link.click();
+  document.body.removeChild(link);
+  return data;
+};
+
+export {
+  getDatabaseStats,
+  getAvailableBackups,
+  createBackup,
+  restoreBackup,
+  downloadBackup,
+};

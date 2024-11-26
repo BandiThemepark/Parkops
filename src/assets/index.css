@@ -15,25 +15,25 @@
     /* change to any hsl value you want */
     --vis-secondary-color: 160 81% 40%;
     --vis-text-color: var(--muted-foreground);
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --background: 0 0% 98.46%;
+    --foreground: 252 0% 10%;
+    --muted: 0 0% 91.54%;
+    --muted-foreground: 0 0% 53.08%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 252 0% 0%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --primary: 220.47 98.26% 36.08%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 92.99% 56.11%;
-    --destructive-foreground: 210 40% 98%;
-    --ring: 220.67 97.83% 36.08%;
+    --card-foreground: 252 0% 30.77%;
+    --border: 0 0% 86.92%;
+    --input: 0 0% 74.62%;
+    --primary: 27.06 92.51% 79.46%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 164.12 70.54% 73.89%;
+    --secondary-foreground: 0 0% 0%;
+    --accent: 27.06 0% 93.85%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 65.31% 66.73%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 27.06 1.79% 32.5%;
     --radius: 0.5rem;
 
     --sidebar-background: var(
@@ -57,25 +57,25 @@
   }
 
   .dark {
-    --background: 240 13.73% 10%;
-    --foreground: 229.76 31.78% 74.71%;
-    --muted: 232.5 15.44% 18.32%;
-    --muted-foreground: 233.79 11.37% 50%;
-    --popover: 234.55 17.46% 12.35%;
-    --popover-foreground: 234 12.4% 52.55%;
-    --card: 234.55 17.46% 12.35%;
-    --card-foreground: 229.76 31.78% 74.71%;
-    --border: 232.5 15.38% 30.59%;
-    --input: 232 20% 14.71%;
-    --primary: 0 0% 82.75%;
-    --primary-foreground: 0 0% 20%;
-    --secondary: 225.45 71.22% 72.75%;
-    --secondary-foreground: 234.55 17.46% 12.35%;
-    --accent: 234.55 17.83% 9.47%;
-    --accent-foreground: 0 0% 82.75%;
-    --destructive: 1.58 47.5% 52.94%;
-    --destructive-foreground: 210 40% 98.04%;
-    --ring: 225.45 71.22% 72.75%;
+    --background: 0 0% 6.27%;
+    --foreground: 252 37% 98%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 62.75%;
+    --popover: 0 0% 8.63%;
+    --popover-foreground: 252 37% 99%;
+    --card: 0 0% 6.27%;
+    --card-foreground: 252 37% 99%;
+    --border: 0 0% 15.69%;
+    --input: 0 0% 25.38%;
+    --primary: 27.06 100% 80%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 164.12 100% 80%;
+    --secondary-foreground: 0 0% 0%;
+    --accent: 27.06 0.22% 23.03%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 100% 75.1%;
+    --destructive-foreground: 0 0% 0%;
+    --ring: 27.06 100% 80%;
     --sidebar-background: var(
       --background
     ); /* Matches the main theme background */

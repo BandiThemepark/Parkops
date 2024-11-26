@@ -152,71 +152,84 @@ const refresh = () => {
         <h2>{{ type.tabName }}</h2>
       </ToggleGroupItem>
     </ToggleGroup> -->
-    <div class="flex items-center justify-between">
-      <h1 class="font-bold text-3xl">Cosmetics</h1>
-      <Button @click="$router.push({ path: '/cosmetics/create' })">
-        <PlusIcon class="size-4" />
-        <span>Create</span>
-      </Button>
-      <!-- <CreateCosmeticSheet /> -->
-    </div>
 
-    <DynaTable
-      :columns="cosmeticColumns({ updateData: refresh })"
-      :data="cosmeticsData"
-      :has-extended-row="true"
-      :search-bar="true"
-      search-for="name"
-      :extra-faceted-filter="[
-        {
-          title: 'Type',
-          hasUniqueOptions: false,
-          options: types.map((type) => ({
-            label: type.tabName,
-            value: type.name,
-            icon: type.icon,
-          })),
-          columnId: 'type',
-        },
-      ]"
-      v-slot="{ rowData }"
-    >
-      <div class="mb-2">
-        <h1 class="font-medium">Description</h1>
-        <p>{{ rowData.description.replaceAll("&&", "\n") }}</p>
-      </div>
-      <div class="mb-2 flex gap-2">
-        <Badge variant="outline">
-          <div class="flex items-center space-x-3">
-            <CoinsIcon class="size-4" />
-            <span>{{ rowData.price }} coins</span>
+    <Card>
+      <CardHeader>
+        <CardTitle> Cosmetics </CardTitle>
+        <CardDescription>
+          Here you can view all the cosmetics that are available in
+          BandiThemepark
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div class="flex justify-end">
+          <Button @click="$router.push({ path: '/cosmetics/create' })">
+            <PlusIcon class="size-4" />
+            <span>Create cosmetic</span>
+          </Button>
+        </div>
+        <DynaTable
+          :columns="cosmeticColumns({ updateData: refresh })"
+          :data="cosmeticsData"
+          :has-extended-row="true"
+          :search-bar="true"
+          search-for="name"
+          :extra-faceted-filter="[
+            {
+              title: 'Type',
+              hasUniqueOptions: false,
+              options: types.map((type) => ({
+                label: type.tabName,
+                value: type.name,
+                icon: type.icon,
+              })),
+              columnId: 'type',
+            },
+          ]"
+          v-slot="{ rowData }"
+        >
+          <div class="mb-2">
+            <h1 class="font-medium">Description</h1>
+            <p>{{ rowData.description.replaceAll("&&", "\n") }}</p>
           </div>
-        </Badge>
-        <Badge variant="outline" v-if="rowData.consumable">
-          <div class="flex items-center space-x-3">
-            <DrumstickIcon class="size-4" />
-            <span>Consumable</span>
+          <div class="mb-2 flex gap-2">
+            <Badge variant="outline">
+              <div class="flex items-center space-x-3">
+                <CoinsIcon class="size-4" />
+                <span>{{ rowData.price }} coins</span>
+              </div>
+            </Badge>
+            <Badge variant="outline" v-if="rowData.consumable">
+              <div class="flex items-center space-x-3">
+                <DrumstickIcon class="size-4" />
+                <span>Consumable</span>
+              </div>
+            </Badge>
           </div>
-        </Badge>
-      </div>
-      {{ console.log(rowData) }}
+          {{ console.log(rowData) }}
 
-      <div v-if="(rowData.itemTags || []).length > 0">
-        <h1 class="font-medium mb-2">Tags</h1>
-        <div v-for="tag in rowData.itemTags || []" :key="tag">
-          <Badge variant="outline">{{ tag }}</Badge>
-        </div>
-      </div>
-      <div v-if="(rowData.requirements || []).length > 0">
-        <h1 class="font-medium mb-2">Requirements</h1>
-        <div v-for="(req, index) in rowData.requirements || []" :key="index">
-          <Badge variant="outline"
-            >{{ req.type }}
-            <span v-if="req.settings">({{ req.settings || "" }})</span>
-          </Badge>
-        </div>
-      </div>
-    </DynaTable>
+          <div v-if="(rowData.itemTags || []).length > 0">
+            <h1 class="font-medium mb-2">Tags</h1>
+            <div v-for="tag in rowData.itemTags || []" :key="tag">
+              <Badge variant="outline">{{ tag }}</Badge>
+            </div>
+          </div>
+          <div v-if="(rowData.requirements || []).length > 0">
+            <h1 class="font-medium mb-2">Requirements</h1>
+            <div
+              v-for="(req, index) in rowData.requirements || []"
+              :key="index"
+            >
+              <Badge variant="outline"
+                >{{ req.type }}
+                <span v-if="req.settings">({{ req.settings || "" }})</span>
+              </Badge>
+            </div>
+          </div>
+        </DynaTable>
+      </CardContent>
+    </Card>
+
     <!-- 
     <div class="flex relative w-full max-w-md items-center gap-1.5 mt-2">
       <Input

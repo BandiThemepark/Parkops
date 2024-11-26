@@ -178,17 +178,20 @@ const secondsToFormattedTime = (seconds: number) => {
         </CardHeader>
       </Card>
     </div>
-    <div class="flex justify-between">
-      <div></div>
-      <div>
-        <Button :disabled="creatingBackup" @click="startBackup">
-          <DatabaseBackupIcon class="size-4 mr-2" />
-          <span>Create backup</span>
-        </Button>
-      </div>
-    </div>
-    <div>
-      <DynaTable :data="availableBackups" :columns="dbbackupColumns" />
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Available backups</CardTitle>
+        <CardDescription> All the backups from our database </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div class="flex justify-end">
+          <Button :disabled="creatingBackup" @click="startBackup">
+            <DatabaseBackupIcon class="size-4 mr-2" />
+            <span>Create backup</span>
+          </Button>
+        </div>
+        <DynaTable :data="availableBackups" :columns="dbbackupColumns" />
+      </CardContent>
+    </Card>
   </DashboardProvider>
 </template>

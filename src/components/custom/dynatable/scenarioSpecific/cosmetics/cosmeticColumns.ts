@@ -75,6 +75,7 @@ export const cosmeticColumns = (props: {
   },
   {
     id: "actions",
+    // accessorKey: "actions",
     enableHiding: false,
     cell: ({ row }) => {
       const cosmetic = row.original;

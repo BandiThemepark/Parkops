@@ -11,6 +11,8 @@ import {
 } from "../components/ui/card";
 import { User } from "firebase/auth";
 import { getGeneralServerStats, getServerInfo } from "../lib/backend/general";
+import DynaForm from "@/components/custom/DynaForm/DynaForm.vue";
+import { z } from "zod";
 
 const isLoading = ref(false);
 const user = ref<null | User>(null);
@@ -169,5 +171,35 @@ const serverInfo = ref<null | any>(null);
         </CardContent>
       </Card>
     </main>
+    <!-- <DynaForm
+      submit-text="Create Server"
+      :inputs="[
+        {
+          type: 'select',
+          name: 'name',
+          label: 'Name',
+          placeholder: 'Name',
+          description: 'The name of the server',
+          required: false,
+          zodValidation: z.optional(z.string()),
+          options: [
+            {
+              groupName: 'ServerGroup 1',
+              items: [
+                { label: 'Server 1', value: 'server1' },
+                { label: 'Server 2', value: 'server2' },
+              ],
+            },
+            {
+              groupName: 'ServerGroup 2',
+              items: [
+                { label: 'Server 3', value: 'server3' },
+                { label: 'Server 4', value: 'server4' },
+              ],
+            },
+          ],
+        },
+      ]"
+    /> -->
   </DashboardProvider>
 </template>

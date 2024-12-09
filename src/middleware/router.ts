@@ -155,6 +155,35 @@ const routes: RouteRecordRaw[] = [
       navigationName: "Achievements",
     },
   },
+  {
+    path: "/audiosources",
+    name: "audiosources",
+    component: () => import("@/views/AudioSources.vue"),
+    meta: {
+      requiresAuth: true,
+      roles: [Roles.OWNER, Roles.CREW],
+      minViewLevel: [Roles.CREW],
+      inNavigation: true,
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" class="size-4" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-audio"><path d="M17.5 22h.5a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v3"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M2 19a2 2 0 1 1 4 0v1a2 2 0 1 1-4 0v-4a6 6 0 0 1 12 0v4a2 2 0 1 1-4 0v-1a2 2 0 1 1 4 0"/></svg>
+`,
+      navigationName: "AudioSources",
+    },
+  },
+  {
+    path: "/serverconnect",
+    name: "serverconnect",
+    component: () => import("@/views/ServerConnection.vue"),
+    meta: {
+      requiresAuth: true,
+      roles: [Roles.OWNER, Roles.CREW],
+      minViewLevel: [Roles.CREW],
+      inNavigation: true,
+      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" class="size-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+
+`,
+      navigationName: "Server files",
+    },
+  },
 ];
 
 const getRoutesForRole = (allowedRoles: Roles[]) => {

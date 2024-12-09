@@ -206,3 +206,49 @@ export type Player = {
 
   // playerTransactions?: PlayerTransaction[]
 };
+
+export class AudioSource {
+  id!: string;
+
+  link!: string;
+  name!: string;
+  author!: string;
+
+  length!: number;
+
+  playlist?: AudioPlaylist[];
+
+  source?: string;
+
+  tags?: string[];
+}
+
+export class AudioPlaylist {
+  id!: string;
+
+  region?: Region;
+
+  audioSources?: AudioSource[];
+
+  name!: string;
+
+  audioSourceOrder!: string;
+}
+
+export class Region {
+  id!: string;
+
+  name!: string;
+
+  displayName!: string;
+
+  priority!: number;
+
+  areas?: Object;
+
+  updatedAt!: Date;
+
+  createdAt!: Date;
+
+  playlist?: AudioPlaylist;
+}

@@ -148,6 +148,8 @@ const onSubmit = (values: any) => {};
           </Button>
         </div>
         <DynaTable
+          :search-bar="true"
+          search-for="name"
           :data="audioSources"
           :columns="audioSourceColumns({ updateData: refreshAudioSourceData })"
         />

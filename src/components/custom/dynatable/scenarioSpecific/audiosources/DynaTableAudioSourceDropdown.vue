@@ -86,6 +86,14 @@ const copyAudio = () => {
     description: "The link has been copied to your clipboard",
   });
 };
+
+const copyAudioId = () => {
+  navigator.clipboard.writeText(props.audioSource.id);
+  toast({
+    title: "Id copied",
+    description: "The id has been copied to your clipboard",
+  });
+};
 </script>
 
 <template>
@@ -134,6 +142,11 @@ const copyAudio = () => {
           <ClipboardCopyIcon class="size-4 mr-2" />
 
           <span>Copy link</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem @click="copyAudioId">
+          <ClipboardCopyIcon class="size-4 mr-2" />
+
+          <span>Copy ID</span>
         </DropdownMenuItem>
         <DropdownMenuItem>
           <PencilIcon class="size-4 mr-2" />

@@ -48,6 +48,8 @@ const drag = ref(false);
       </CardHeader>
       <CardContent>
         <DynaTable
+          :search-bar="true"
+          search-for="name"
           :has-extended-row="true"
           :data="audioPlaylist"
           :columns="audioPlaylistColumns({ updateData: refreshAudioPlaylist })"

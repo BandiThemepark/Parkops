@@ -47,6 +47,7 @@ watch(
   }
 );
 
+
 const sortedData = ref(props.data);
 const sortByColumn = ref<null | TableColumn>(null);
 const sortDirection = ref<"asc" | "desc">("asc");

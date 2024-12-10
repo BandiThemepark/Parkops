@@ -226,7 +226,7 @@ export class AudioSource {
 export class AudioPlaylist {
   id!: string;
 
-  region?: Region;
+  region?: Region[];
 
   audioSources?: AudioSource[];
 

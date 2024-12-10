@@ -104,6 +104,14 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .dragdrop-move {
+    transition: transform 0.5s;
+  }
+
+  .ghost {
+    opacity: 35%;
+  }
 }
 
 /* @tailwind base;

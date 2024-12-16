@@ -7,6 +7,7 @@ import DynaTableAudioSourceDropdown from "./DynaTableAudioSourceDropdown.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
 import RegionHoverCard from "./RegionHoverCard.vue";
 import DynaTableAudioPlaylistDropdown from "./DynaTableAudioPlaylistDropdown.vue";
+import DynaTableExpandButton from "../../DynaTableExpandButton.vue";
 
 export const audioPlaylistColumns = (props: {
   updateData: () => any;
@@ -50,16 +51,15 @@ export const audioPlaylistColumns = (props: {
     enableHiding: false,
     cell: ({ row }) => {
       const audioPlaylist = row.original;
-      return h(
-        "div",
-        { class: "relative text-right" },
+      return h("div", { class: "relative text-right space-x-2" }, [
+        h(DynaTableExpandButton, { onExpand: row.toggleExpanded }),
         h(DynaTableAudioPlaylistDropdown, {
           audioPlaylist: audioPlaylist,
           onRefreshAudioSources: props.updateData,
           onExpand: row.toggleExpanded,
           isExpanded: row.getIsExpanded(),
-        })
-      );
+        }),
+      ]);
     },
   },
 ];

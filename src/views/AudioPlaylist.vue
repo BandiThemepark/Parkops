@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import AudioPlaylistDragDrop from "@/components/custom/AudioPlaylistDragDrop.vue";
+import AudioPlaylistRegionEdit from "@/components/custom/AudioPlaylistRegionEdit.vue";
 import DashboardProvider from "@/components/custom/DashboardProvider.vue";
 import DynaTable from "@/components/custom/dynatable/DynaTable.vue";
+import DynaTableFacetedFilter from "@/components/custom/dynatable/DynaTableFacetedFilter.vue";
 import { audioPlaylistColumns } from "@/components/custom/dynatable/scenarioSpecific/audiosources/audioPlaylistColumns";
 import Card from "@/components/ui/card/Card.vue";
 import CardContent from "@/components/ui/card/CardContent.vue";
@@ -10,7 +12,8 @@ import CardHeader from "@/components/ui/card/CardHeader.vue";
 import CardTitle from "@/components/ui/card/CardTitle.vue";
 import { useToast } from "@/components/ui/toast";
 import { getAudioPlaylists } from "@/lib/backend/audio";
-import { AudioSource } from "@/lib/backendTypes";
+import { getRegions } from "@/lib/backend/general";
+import { AudioSource, Region } from "@/lib/backendTypes";
 import { GripHorizontalIcon } from "lucide-vue-next";
 import { computed, ref } from "vue";
 import { VueDraggableNext } from "vue-draggable-next";
@@ -31,10 +34,20 @@ const refreshAudioPlaylist = async () => {
   });
 };
 
-const drag = ref(false);
+const fetchRegions = async () => {
+  const data = await getRegions();
+  if (data.status === 200) {
+    return data.data;
+  }
+  return [];
+};
 
+const drag = ref(false);
+const availableRegions = ref([]);
 (async () => {
   await refreshAudioPlaylist();
+  const regions = await fetchRegions();
+  availableRegions.value = regions.data;
 })();
 </script>
 <template>
@@ -55,6 +68,11 @@ const drag = ref(false);
           :columns="audioPlaylistColumns({ updateData: refreshAudioPlaylist })"
           v-slot="{ rowData }"
         >
+          <h1 class="font-semibold mb-2">Region</h1>
+          <AudioPlaylistRegionEdit
+            :availableRegions="availableRegions"
+            :playlist="rowData"
+          />
           <h1 class="font-semibold mb-2">Tracks in this playlist</h1>
           <AudioPlaylistDragDrop
             :audioSources="rowData.audioSources!"

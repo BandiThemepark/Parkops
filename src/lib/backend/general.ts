@@ -49,4 +49,14 @@ const checkApiStatus = async () => {
   }
 };
 
-export { getGeneralServerStats, getServerInfo, checkApiStatus };
+const getRegions = async () => {
+  const data = axios.get(`${BANDITHEMEPARK_API}regions`, {
+    headers: {
+      Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+    },
+  });
+
+  return data;
+};
+
+export { getGeneralServerStats, getServerInfo, checkApiStatus, getRegions };

@@ -28,7 +28,9 @@ import {
   uploadFile,
 } from "@/lib/backend/files";
 import {
+  ClipboardCopyIcon,
   DownloadIcon,
+  ExternalLinkIcon,
   FileIcon,
   FolderIcon,
   FolderOpenIcon,
@@ -213,6 +215,32 @@ const download = async (fileName: string) => {
     description: "The file has been downloaded successfully",
   });
 };
+
+const createLink = (path: string) => {
+  if (path.includes("cdn")) {
+    const stripped = path.replace("/home/ubuntu/bandithemepark/data/cdn/", "");
+    return `https://cdn.bandithemepark.net/public/${stripped}`;
+  } else if (path.includes("resourcepack")) {
+    const stripped = path.replace(
+      "/home/ubuntu/bandithemepark/data/resourcepack/",
+      ""
+    );
+    return `http://resourcepack.bandithemepark.net/public/${stripped}`;
+  }
+};
+
+const openLink = (link: string) => {
+  console.log(link);
+  window.open(createLink(link), "_blank");
+};
+
+const copyLink = (path: string) => {
+  navigator.clipboard.writeText(createLink(path) as string);
+  toast({
+    title: "Link copied",
+    description: "The link has been copied to your clipboard",
+  });
+};
 </script>
 <template>
   <DashboardProvider>
@@ -304,7 +332,7 @@ const download = async (fileName: string) => {
                     class="size-4 fill-primary"
                     v-if="file.isDirectory"
                   />
-                  <FileIcon class="size-4 fill-primary" v-else />
+                  <FileIcon class="size-4 fill-secondary" v-else />
                   <p>{{ file.name }}</p>
                 </Button>
               </ContextMenuTrigger>
@@ -320,11 +348,27 @@ const download = async (fileName: string) => {
                 <ContextMenuItem
                   v-if="!file.isDirectory"
                   class="flex space-x-2"
+                  @click="openLink(file.path)"
+                >
+                  <ExternalLinkIcon class="size-4" />
+                  <p>Open</p>
+                </ContextMenuItem>
+                <ContextMenuItem
+                  v-if="!file.isDirectory"
+                  class="flex space-x-2"
+                  @click="copyLink(file.path)"
+                >
+                  <ClipboardCopyIcon class="size-4" />
+                  <p>Copy link</p>
+                </ContextMenuItem>
+                <!-- <ContextMenuItem
+                  v-if="!file.isDirectory"
+                  class="flex space-x-2"
                   @click="download(file.name)"
                 >
                   <DownloadIcon class="size-4" />
                   <p>Download</p>
-                </ContextMenuItem>
+                </ContextMenuItem> -->
                 <ContextMenuSeparator />
                 <ContextMenuItem
                   class="flex space-x-2 hover:!bg-destructive hover:!text-destructive-foreground"

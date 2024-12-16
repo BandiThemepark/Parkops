@@ -78,6 +78,23 @@ const updateAudioPlaylistTracks = async (id: string, tracks: AudioSource[]) => {
   return data;
 };
 
+const updateAudioRegions = async (id: string, regions: string[]) => {
+  console.log("updateAudioRegions", id, regions);
+  const data = await axios.put(
+    `${BANDITHEMEPARK_API}audioPlaylist/regions`,
+    {
+      id: id,
+      regions: regions,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+      },
+    }
+  );
+  return data;
+};
+
 export {
   getAudioSources,
   createAudioSource,
@@ -85,4 +102,5 @@ export {
   updateAudioPlaylistOrder,
   getAudioPlaylists,
   updateAudioPlaylistTracks,
+  updateAudioRegions,
 };

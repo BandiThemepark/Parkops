@@ -250,5 +250,5 @@ export class Region {
 
   createdAt!: Date;
 
-  playlist?: AudioPlaylist;
+  playlist?: AudioPlaylist[];
 }

@@ -100,7 +100,7 @@ const saveOrder = async () => {
   ]);
 
   if (saveData.status === 200 && data.status === 200) {
-    props.playList.audioSourceOrder = JSON.stringify(newOrder.value);
+    props.playList.audioSourceOrder = newOrder.value;
     toast({
       title: "Success",
       description: "Audio playlist order updated",

@@ -95,6 +95,30 @@ const updateAudioRegions = async (id: string, regions: string[]) => {
   return data;
 };
 
+const createAudioPlaylist = async (name: string) => {
+  const data = await axios.post(
+    `${BANDITHEMEPARK_API}audioplaylist`,
+    {
+      name: name,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+      },
+    }
+  );
+  return data;
+};
+
+const deleteAudioPlaylist = async (id: string) => {
+  const data = await axios.delete(`${BANDITHEMEPARK_API}audioPlaylist/${id}`, {
+    headers: {
+      Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+    },
+  });
+  return data;
+};
+
 export {
   getAudioSources,
   createAudioSource,
@@ -103,4 +127,6 @@ export {
   getAudioPlaylists,
   updateAudioPlaylistTracks,
   updateAudioRegions,
+  createAudioPlaylist,
+  deleteAudioPlaylist,
 };

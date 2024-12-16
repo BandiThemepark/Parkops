@@ -34,12 +34,16 @@ import DialogTrigger from "@/components/ui/dialog/DialogTrigger.vue";
 import { useToast } from "@/components/ui/toast";
 import DialogTitle from "@/components/ui/dialog/DialogTitle.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
-import { deleteAudioSource } from "@/lib/backend/audio";
+import { deleteAudioPlaylist, deleteAudioSource } from "@/lib/backend/audio";
 
 const props = defineProps({
   audioPlaylist: {
     type: Object as PropType<AudioPlaylist>,
     required: true,
+  },
+  isExpanded: {
+    type: Boolean,
+    required: false,
   },
 });
 
@@ -54,7 +58,24 @@ const emit = defineEmits<{
 
 const { toast } = useToast();
 
-const removeAudioPlaylist = async () => {};
+const removeAudioPlaylist = async () => {
+  const data = await deleteAudioPlaylist(props.audioPlaylist.id);
+  if (data.status === 200) {
+    toast({
+      title: "Success",
+      description: "Audio playlist removed successfully",
+    });
+    emit("refreshAudioSources");
+    if (props.isExpanded) {
+      emit("expand");
+    }
+  } else {
+    toast({
+      title: "Error",
+      description: "Failed to remove audio playlist",
+    });
+  }
+};
 
 enum Dialogs {
   removeDialog = "removeDialog",

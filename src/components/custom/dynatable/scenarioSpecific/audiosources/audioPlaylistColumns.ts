@@ -57,6 +57,7 @@ export const audioPlaylistColumns = (props: {
           audioPlaylist: audioPlaylist,
           onRefreshAudioSources: props.updateData,
           onExpand: row.toggleExpanded,
+          isExpanded: row.getIsExpanded(),
         })
       );
     },

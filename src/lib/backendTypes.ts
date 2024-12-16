@@ -232,7 +232,7 @@ export class AudioPlaylist {
 
   name!: string;
 
-  audioSourceOrder!: string;
+  audioSourceOrder!: string[];
 }
 
 export class Region {

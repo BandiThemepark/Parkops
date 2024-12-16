@@ -56,7 +56,10 @@ const findRegion = (id: string) => {
 </script>
 <template>
   <div class="mb-2">
-    <div :class="{ 'mb-2': selectedValues.length > 0 }" class="gap-2 flex">
+    <div
+      :class="{ 'mb-2': selectedValues.length > 0 }"
+      class="gap-2 flex flex-wrap"
+    >
       <Badge variant="outline" v-for="region in selectedValues" :key="region">
         {{ findRegion(region)?.name }}
       </Badge>

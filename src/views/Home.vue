@@ -238,7 +238,7 @@ onBeforeMount(async () => {
           <CardDescription> Previous logged total of players </CardDescription>
         </CardHeader>
         <CardContent>
-          <FromToDatePicker v-model="fromToPlayers" />
+          <FromToDatePicker v-model="fromToPlayers as any" />
           <LineChart
             v-if="!isLoading && onlinePlayerData.length"
             :data="onlinePlayerData"

@@ -95,6 +95,17 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: "/shops/:id",
+    name: "shopsdetail",
+    component: () => import("@/views/ShopDetail.vue"),
+    meta: {
+      requiresAuth: true,
+      roles: [Roles.OWNER, Roles.CREW],
+      minViewLevel: [Roles.CREW],
+      inNavigation: false,
+    },
+  },
+  {
     path: "/cosmetics/create",
     name: "createcosmetics",
     component: () => import("@/views/CreateCosmetic.vue"),

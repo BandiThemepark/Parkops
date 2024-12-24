@@ -63,7 +63,6 @@ const refreshCosmetics = async () => {
           :data="shops"
           :search-bar="true"
           search-for="name"
-          :has-extended-row="true"
         >
         </DynaTable>
       </CardContent>

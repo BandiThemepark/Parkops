@@ -5,6 +5,11 @@ import DynaTableColumnHeader from "../../DynaTableColumnHeader.vue";
 import Badge from "@/components/ui/badge/Badge.vue";
 import DynaTableExpandButton from "../../DynaTableExpandButton.vue";
 import DynaTableShopsDropdown from "./DynaTableShopsDropdown.vue";
+import DynaTableOpenPageButton from "../../DynaTableOpenPageButton.vue";
+
+const getCurrentDomain = () => {
+  return window.location.hostname;
+};
 
 export const ShopsColumns = (props: {
   updateData: () => any;
@@ -48,7 +53,9 @@ export const ShopsColumns = (props: {
     cell: ({ row }) => {
       const shop = row.original;
       return h("div", { class: "relative text-right space-x-2" }, [
-        h(DynaTableExpandButton, { onExpand: row.toggleExpanded }),
+        h(DynaTableOpenPageButton, {
+          toLink: `shops/${shop.id}`,
+        }),
         h(DynaTableShopsDropdown, {
           shop: shop,
           onRefreshShops: props.updateData,

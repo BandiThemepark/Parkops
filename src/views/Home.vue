@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onBeforeMount, ref, watch } from "vue";
 import DashboardProvider from "../components/custom/DashboardProvider.vue";
 import useAuthentication from "../middleware/authentication";
 import { Skeleton } from "../components/ui/skeleton";
@@ -9,16 +9,32 @@ import {
   CardDescription,
   CardHeader,
 } from "../components/ui/card";
+import {
+  CalendarDate,
+  DateFormatter,
+  getLocalTimeZone,
+} from "@internationalized/date";
 import { User } from "firebase/auth";
 import { getGeneralServerStats, getServerInfo } from "../lib/backend/general";
 import DynaForm from "@/components/custom/DynaForm/DynaForm.vue";
 import { z } from "zod";
+import CardTitle from "@/components/ui/card/CardTitle.vue";
+import LineChart from "@/components/ui/chart-line/LineChart.vue";
+import CustomToolTip from "@/components/custom/CustomToolTip.vue";
+import { getOnlinePlayerStats } from "@/lib/backend/players";
+import { CurveType } from "@unovis/ts";
+import FromToDatePicker from "@/components/custom/FromToDatePicker.vue";
+import { DateRange } from "radix-vue";
+import { c } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
 
 const isLoading = ref(false);
 const user = ref<null | User>(null);
 const generalServerStats = ref<null | any>(null);
 const serverInfo = ref<null | any>(null);
-(async () => {
+
+const onlinePlayerData = ref<{ _time: string; "Online Players": number }[]>([]);
+
+const fetchData = async () => {
   isLoading.value = true;
   const data = await Promise.all([
     useAuthentication.getUser(),
@@ -30,7 +46,53 @@ const serverInfo = ref<null | any>(null);
   generalServerStats.value = data[1];
   serverInfo.value = data[2];
   isLoading.value = false;
-})();
+};
+
+const dayBuffer = 4;
+const todayMinBuffer = new Date(
+  new Date().getTime() - dayBuffer * 24 * 60 * 60 * 1000
+);
+const todayMaxBuffer = new Date(
+  new Date().getTime() + dayBuffer * 24 * 60 * 60 * 1000
+);
+const fromToPlayers = ref<DateRange>({
+  start: new CalendarDate(
+    todayMinBuffer.getFullYear(),
+    todayMinBuffer.getMonth() + 1,
+    todayMinBuffer.getDate()
+  ),
+  end: new CalendarDate(
+    todayMaxBuffer.getFullYear(),
+    todayMaxBuffer.getMonth() + 1,
+    todayMaxBuffer.getDate()
+  ),
+} as DateRange);
+
+watch(
+  fromToPlayers,
+  async (newValue) => {
+    console.log(newValue);
+    if (newValue.start && newValue.end) {
+      const data = await getOnlinePlayerStats(
+        newValue.start.toDate(getLocalTimeZone()).toISOString(),
+        newValue.end.toDate(getLocalTimeZone()).toISOString()
+      );
+      console.log(data);
+      const x = (data.data as any[]).map((d: any) => ({
+        _time: d._time,
+        "Online Players": d._value,
+      }));
+      onlinePlayerData.value = x;
+    }
+  },
+  {
+    immediate: true,
+  }
+);
+
+onBeforeMount(async () => {
+  fetchData();
+});
 </script>
 
 <template>
@@ -168,6 +230,35 @@ const serverInfo = ref<null | any>(null);
             {{ generalServerStats.totalValue.sum }}
           </h1>
           <Skeleton v-else class="w-full h-12" />
+        </CardContent>
+      </Card>
+      <Card class="col-span-12">
+        <CardHeader>
+          <CardTitle> Online players </CardTitle>
+          <CardDescription> Previous logged total of players </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <FromToDatePicker v-model="fromToPlayers" />
+          <LineChart
+            v-if="!isLoading && onlinePlayerData.length"
+            :data="onlinePlayerData"
+            :categories="['Online Players']"
+            index="_time"
+            :x-formatter="
+              (tick, i) => {
+                const dateToDisplay = onlinePlayerData[i]._time;
+                return new Intl.DateTimeFormat('en', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: '2-digit',
+                }).format(new Date(dateToDisplay));
+              }
+            "
+            :show-grid-line="true"
+            :curve-type="CurveType.Linear"
+            :custom-tooltip="CustomToolTip"
+          >
+          </LineChart>
         </CardContent>
       </Card>
     </main>

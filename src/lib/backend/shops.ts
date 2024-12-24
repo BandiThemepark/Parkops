@@ -11,4 +11,13 @@ const getShops = async () => {
   return data;
 };
 
-export { getShops };
+const getOneShop = async (id: string) => {
+  const data = axios.get(`${BANDITHEMEPARK_API}shops/${id}`, {
+    headers: {
+      Authorization: `Bearer ${await useAuthentication.getAuthenticationToken()}`,
+    },
+  });
+  return data;
+};
+
+export { getShops, getOneShop };
